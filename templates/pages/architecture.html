@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}Architecture{% endblock %}
+{% block extra_css %}<style>
+.ph{padding:120px 0 70px;background:var(--navy1);border-bottom:1px solid rgba(0,212,232,.1);}
+.wrap{max-width:1100px;margin:0 auto;padding:0 32px;}
+.ph-tag{font-family:monospace;font-size:11px;color:var(--cyan);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;}
+.ph-title{font-family:Syne,sans-serif;font-size:clamp(36px,6vw,64px);font-weight:800;color:var(--white);line-height:1.1;margin-bottom:16px;}
+.ph-desc{font-size:17px;color:var(--gray);max-width:600px;line-height:1.8;}
+.sec{padding:80px 0;}
+.sec-tag{font-family:monospace;font-size:11px;color:var(--cyan);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;}
+.sec-h{font-family:Syne,sans-serif;font-size:clamp(26px,4vw,42px);font-weight:800;color:var(--white);margin-bottom:36px;}
+.sec-h .a{color:var(--cyan);}
+.bp{font-size:15px;line-height:1.85;color:var(--text);margin-bottom:14px;}
+
+/* Layers */
+.layers{display:flex;flex-direction:column;gap:10px;margin-bottom:40px;}
+.layer{display:flex;align-items:stretch;background:var(--navy2);border:1px solid rgba(255,255,255,.07);border-radius:10px;overflow:hidden;transition:all .2s;}
+.layer:hover{border-color:rgba(0,212,232,.3);transform:translateX(6px);}
+.layer-bar{width:6px;flex-shrink:0;}
+.layer-body{padding:20px 24px;flex:1;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.layer-left h3{font-family:Syne,sans-serif;font-size:15px;font-weight:700;color:var(--white);margin-bottom:5px;}
+.layer-left p{font-size:13px;color:var(--gray);line-height:1.6;max-width:500px;}
+.layer-right{font-family:monospace;font-size:11px;color:var(--cyan2);text-align:right;flex-shrink:0;}
+.layer-num{font-family:Syne,sans-serif;font-size:20px;font-weight:800;padding:6px 12px;border-radius:8px;flex-shrink:0;}
+
+/* Threat table */
+.threat-hdr{display:grid;grid-template-columns:200px 1fr 1fr;background:var(--navy3);border-radius:10px 10px 0 0;padding:12px 18px;font-family:monospace;font-size:10px;color:var(--gray2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:0;}
+.threat-row{display:grid;grid-template-columns:200px 1fr 1fr;border-bottom:1px solid rgba(255,255,255,.04);padding:16px 18px;background:var(--navy2);transition:background .2s;}
+.threat-row:last-child{border-bottom:none;border-radius:0 0 10px 10px;}
+.threat-row:hover{background:var(--navy3);}
+.thr-name{font-family:Syne,sans-serif;font-size:13px;font-weight:700;color:var(--white);}
+.thr-assume{font-size:12.5px;color:var(--gray);line-height:1.6;padding-right:16px;}
+.thr-mit{font-size:12.5px;color:var(--off);line-height:1.6;}
+.threat-wrap{border:1px solid rgba(255,255,255,.07);border-radius:10px;overflow:hidden;}
+
+/* Protocol flow */
+.proto-flow{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding:4px 0;}
+.proto-step{flex:1;min-width:140px;background:var(--navy2);border:1px solid rgba(255,255,255,.07);padding:24px 16px;text-align:center;transition:all .2s;position:relative;}
+.proto-step:first-child{border-radius:10px 0 0 10px;}
+.proto-step:last-child{border-radius:0 10px 10px 0;}
+.proto-step:hover{background:var(--navy3);border-color:rgba(0,212,232,.25);}
+.proto-step::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent,var(--cyan));}
+.ps-icon{font-size:28px;margin-bottom:10px;}
+.ps-title{font-family:Syne,sans-serif;font-size:13px;font-weight:700;color:var(--white);margin-bottom:6px;}
+.ps-desc{font-family:monospace;font-size:10px;color:var(--gray);line-height:1.6;}
+.proto-arr{display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--cyan2);flex-shrink:0;padding:0 4px;}
+
+/* Security features grid */
+.sec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.sf{background:var(--navy2);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:22px;transition:all .2s;}
+.sf:hover{border-color:rgba(0,212,232,.25);transform:translateY(-3px);}
+.sf-icon{font-size:28px;margin-bottom:10px;}
+.sf h4{font-family:Syne,sans-serif;font-size:14px;font-weight:700;color:var(--white);margin-bottom:7px;}
+.sf p{font-size:12.5px;color:var(--gray);line-height:1.65;}
+.sf-tag{font-family:monospace;font-size:10px;color:var(--cyan);margin-top:8px;display:block;}
+@media(max-width:800px){.threat-hdr,.threat-row{grid-template-columns:1fr;}.sec-grid{grid-template-columns:1fr 1fr;}.proto-flow{flex-direction:column;}.proto-arr{transform:rotate(90deg);align-self:center;}}
+@media(max-width:500px){.sec-grid{grid-template-columns:1fr;}}
+</style>{% endblock %}
+{% block content %}
+<div class="ph"><div class="wrap">
+  <div class="ph-tag">System Design</div>
+  <h1 class="ph-title">SMPC Cloud Architecture</h1>
+  <p class="ph-desc">A five-layer containerized system integrating Shamir Secret Sharing, BGW computation protocol, and Kubernetes-based dynamic orchestration.</p>
+</div></div>
+
+<!-- LAYERS -->
+<section class="sec" style="background:var(--navy1);"><div class="wrap">
+  <div class="sec-tag">System Architecture</div>
+  <h2 class="sec-h">Five-Layer <span class="a">Design</span></h2>
+  <p class="bp" style="max-width:700px;margin-bottom:32px;">The architecture is modular and compliant with cloud security principles — each layer maintains isolation and minimizes the risk of data leakage across boundaries.</p>
+  <div class="layers">
+    <div class="layer"><div class="layer-bar" style="background:var(--cyan);"></div><div class="layer-body"><div class="layer-left"><h3>1 — Input Preparation Layer</h3><p>Data owners encode datasets into cryptographic shares using Shamir's Secret Sharing and local AES-256-GCM encryption. Raw data <strong style="color:var(--white)">never leaves the client device</strong>.</p></div><div class="layer-right">Shamir SSS<br/>AES-256-GCM<br/>HKDF Key Derivation</div><div class="layer-num" style="background:rgba(0,212,232,.1);color:var(--cyan);">01</div></div></div>
+    <div class="layer"><div class="layer-bar" style="background:var(--green);"></div><div class="layer-body"><div class="layer-left"><h3>2 — Confidential Computation Layer</h3><p>Cloud nodes execute SMPC protocols over shares. Only encrypted/masked intermediate values are exchanged. No node accesses unencrypted data at any point.</p></div><div class="layer-right">BGW Protocol<br/>Beaver Triples<br/>Oblivious Transfer</div><div class="layer-num" style="background:rgba(16,232,154,.1);color:var(--green);">02</div></div></div>
+    <div class="layer"><div class="layer-bar" style="background:var(--orange);"></div><div class="layer-body"><div class="layer-left"><h3>3 — Storage & Communication Layer</h3><p>TLS 1.3-encrypted messaging between nodes, redundant storage, and authenticated message exchange ensure data integrity and reliability across the distributed system.</p></div><div class="layer-right">TLS 1.3<br/>Message Authentication<br/>Redundant Storage</div><div class="layer-num" style="background:rgba(245,166,35,.1);color:var(--orange);">03</div></div></div>
+    <div class="layer"><div class="layer-bar" style="background:var(--purple);"></div><div class="layer-body"><div class="layer-left"><h3>4 — Output Aggregation Layer</h3><p>Partial computation results are combined via threshold-based Lagrange interpolation to reconstruct the final output, delivered securely to authorized parties only.</p></div><div class="layer-right">Lagrange Interpolation<br/>Threshold Reconstruction<br/>Access Control</div><div class="layer-num" style="background:rgba(155,114,240,.1);color:var(--purple);">04</div></div></div>
+    <div class="layer"><div class="layer-bar" style="background:var(--red);"></div><div class="layer-body"><div class="layer-left"><h3>5 — Cloud Orchestrator (Supervisory)</h3><p>Kubernetes-based orchestrator monitors node behavior, detects collusion attempts, enforces access control and load balancing. Auto-scales nodes based on KPI thresholds (latency >1.5s, utilization >80%).</p></div><div class="layer-right">Kubernetes<br/>Docker Containers<br/>Adaptive Scheduling</div><div class="layer-num" style="background:rgba(240,96,96,.1);color:var(--red);">05</div></div></div>
+  </div>
+</div></section>
+
+<!-- PROTOCOL FLOW -->
+<section class="sec"><div class="wrap">
+  <div class="sec-tag">Execution Workflow</div>
+  <h2 class="sec-h">SMPC <span class="a">Protocol Flow</span></h2>
+  <div class="proto-flow">
+    <div class="proto-step" style="--accent:var(--cyan);"><div class="ps-icon">🌐</div><div class="ps-title">IP Capture</div><div class="ps-desc">Client IP hashed with SHA3-256. Never stored in plaintext.</div></div>
+    <div class="proto-arr">›</div>
+    <div class="proto-step" style="--accent:var(--green);"><div class="ps-icon">🔐</div><div class="ps-title">Encrypt IDs</div><div class="ps-desc">AES-256-GCM + HMAC-SHA256 on all identifiers.</div></div>
+    <div class="proto-arr">›</div>
+    <div class="proto-step" style="--accent:var(--orange);"><div class="ps-icon">🔀</div><div class="ps-title">Secret Split</div><div class="ps-desc">Shamir (n,k) shares distributed to nodes over TLS.</div></div>
+    <div class="proto-arr">›</div>
+    <div class="proto-step" style="--accent:var(--purple);"><div class="ps-icon">⚙️</div><div class="ps-title">BGW Compute</div><div class="ps-desc">Nodes compute on shares. Only masked intermediates exchanged.</div></div>
+    <div class="proto-arr">›</div>
+    <div class="proto-step" style="--accent:var(--red);"><div class="ps-icon">🔗</div><div class="ps-title">Reconstruct</div><div class="ps-desc">Lagrange interpolation over GF(p) produces final output.</div></div>
+    <div class="proto-arr">›</div>
+    <div class="proto-step" style="--accent:var(--cyan);"><div class="ps-icon">✅</div><div class="ps-title">Deliver</div><div class="ps-desc">Result sent securely to authorized parties only.</div></div>
+  </div>
+</div></section>
+
+<!-- THREAT MODEL -->
+<section class="sec" style="background:var(--navy1);"><div class="wrap">
+  <div class="sec-tag">Security Model</div>
+  <h2 class="sec-h">Threat Model & <span class="a">Mitigations</span></h2>
+  <div class="threat-wrap">
+    <div class="threat-hdr"><span>Threat Category</span><span>Security Assumption</span><span>Mitigation Strategy</span></div>
+    <div class="threat-row"><span class="thr-name">🕵️ Honest-but-Curious Cloud</span><span class="thr-assume">Cloud nodes follow protocol correctly but may attempt to infer private data from computation patterns.</span><span class="thr-mit">SMPC protocols ensure computations occur over secret shares; no single node holds complete information.</span></div>
+    <div class="threat-row"><span class="thr-name">🎯 External Adversary (MITM)</span><span class="thr-assume">Network channels are vulnerable to interception or packet manipulation by external actors.</span><span class="thr-mit">TLS 1.3 encryption and authenticated message exchange maintains data integrity and confidentiality.</span></div>
+    <div class="threat-row"><span class="thr-name">🤝 Colluding Nodes</span><span class="thr-assume">A limited subset of nodes may collaborate to reconstruct secret data from their combined shares.</span><span class="thr-mit">Threshold-based SMPC tolerates up to k-1 colluding nodes. Detection and isolation policies apply beyond threshold.</span></div>
+    <div class="threat-row"><span class="thr-name">💻 Compromised Client Device</span><span class="thr-assume">End-user devices assumed secure during preprocessing and share generation phase.</span><span class="thr-mit">Client-side validation, secure key storage, and pre-upload AES-256-GCM encryption prevent data leakage.</span></div>
+    <div class="threat-row"><span class="thr-name">⚠️ Faulty / Unresponsive Nodes</span><span class="thr-assume">Some nodes may fail or behave unpredictably during computation rounds.</span><span class="thr-mit">Fault-tolerant SMPC with redundancy and checkpoint recovery maintains correctness and service continuity.</span></div>
+  </div>
+</div></section>
+
+<!-- WEB SECURITY FEATURES -->
+<section class="sec"><div class="wrap">
+  <div class="sec-tag">Application Security</div>
+  <h2 class="sec-h">Web Application <span class="a">Security Features</span></h2>
+  <div class="sec-grid">
+    <div class="sf"><div class="sf-icon">🔒</div><h4>Rate Limiting</h4><p>Login: 20/min, 100/hr. Password reset: 5/hr. API endpoints: 30/min. Prevents brute force and DoS attacks.</p><span class="sf-tag">Flask-Limiter</span></div>
+    <div class="sf"><div class="sf-icon">🚫</div><h4>Account Lockout</h4><p>Temporary lock after 5 failed login attempts. Configurable lock duration. Security event logged for each failure.</p><span class="sf-tag">bcrypt timing-safe</span></div>
+    <div class="sf"><div class="sf-icon">🔑</div><h4>Password Security</h4><p>bcrypt with 12 rounds + unique salt per hash. Minimum 8 characters enforced server-side. Timing-safe comparison.</p><span class="sf-tag">bcrypt rounds=12</span></div>
+    <div class="sf"><div class="sf-icon">📱</div><h4>MFA / TOTP</h4><p>Time-based OTP via Google Authenticator / Authy. QR code provisioning. Session-level MFA verification tracking.</p><span class="sf-tag">pyotp TOTP RFC 6238</span></div>
+    <div class="sf"><div class="sf-icon">🍪</div><h4>Secure Sessions</h4><p>HttpOnly cookies prevent XSS theft. SameSite=Lax prevents CSRF. Session tokens rotated on every login.</p><span class="sf-tag">1-hour expiry</span></div>
+    <div class="sf"><div class="sf-icon">🛡️</div><h4>CSRF Protection</h4><p>CSRF tokens on all forms. Token validated server-side on every POST. API calls require X-CSRFToken header.</p><span class="sf-tag">Flask-WTF</span></div>
+    <div class="sf"><div class="sf-icon">✉️</div><h4>Email Verification</h4><p>SHA-256 hashed tokens. 24-hour expiry. Generic responses prevent email enumeration attacks.</p><span class="sf-tag">Single-use token</span></div>
+    <div class="sf"><div class="sf-icon">🔄</div><h4>Password Reset</h4><p>Single-use tokens with 30-minute expiry. Invalidates all sessions after reset. Generic "if email exists" response.</p><span class="sf-tag">No email enumeration</span></div>
+    <div class="sf"><div class="sf-icon">👑</div><h4>RBAC Authorization</h4><p>Role-based access control with admin/user roles. Server-side enforcement — frontend-only checks never relied upon.</p><span class="sf-tag">Admin · User roles</span></div>
+    <div class="sf"><div class="sf-icon">📊</div><h4>Security Logging</h4><p>All login attempts logged with IP, user agent, timestamp, and failure reason. Admin can review security events in real-time.</p><span class="sf-tag">Structured event logs</span></div>
+    <div class="sf"><div class="sf-icon">🧩</div><h4>SQL Injection Prevention</h4><p>SQLAlchemy ORM with parameterized queries. Input validated server-side on all endpoints. No raw SQL strings.</p><span class="sf-tag">SQLAlchemy ORM</span></div>
+    <div class="sf"><div class="sf-icon">💬</div><h4>Generic Error Messages</h4><p>Never reveals whether email or password is wrong. Never exposes internal logic. Consistent timing prevents side-channel leaks.</p><span class="sf-tag">No enumeration</span></div>
+  </div>
+</div></section>
+{% endblock %}

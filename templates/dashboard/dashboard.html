@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block extra_css %}
+<style>
+.dash-wrap{max-width:1200px;margin:0 auto;padding:40px 24px;}
+.dash-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:36px;}
+.dash-welcome{font-family:Syne,sans-serif;font-size:28px;font-weight:800;color:var(--white);margin-bottom:6px;}
+.dash-sub{font-family:monospace;font-size:12px;color:var(--gray);}
+.dash-role{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;
+  font-family:monospace;font-size:11px;margin-top:8px;}
+.role-admin{background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);color:var(--orange);}
+.role-user{background:rgba(0,212,232,0.08);border:1px solid rgba(0,212,232,0.2);color:var(--cyan);}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px;}
+.stat-card{background:var(--navy2);border:1px solid rgba(255,255,255,0.06);
+  border-radius:12px;padding:22px;position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.sc-1::before{background:var(--cyan);}
+.sc-2::before{background:var(--green);}
+.sc-3::before{background:var(--orange);}
+.sc-4::before{background:var(--purple);}
+.stat-card .num{font-family:Syne,sans-serif;font-size:32px;font-weight:800;display:block;margin-bottom:4px;}
+.sc-1 .num{color:var(--cyan);}
+.sc-2 .num{color:var(--green);}
+.sc-3 .num{color:var(--orange);}
+.sc-4 .num{color:var(--purple);}
+.stat-card .lbl{font-family:monospace;font-size:11px;color:var(--gray);letter-spacing:1px;text-transform:uppercase;}
+.stat-card .ico{position:absolute;bottom:14px;right:14px;font-size:28px;opacity:.15;}
+
+/* CARDS */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;}
+.dash-card{background:var(--navy2);border:1px solid rgba(255,255,255,0.06);border-radius:14px;overflow:hidden;}
+.dash-card-hdr{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.06);
+  display:flex;align-items:center;justify-content:space-between;}
+.dash-card-title{font-family:Syne,sans-serif;font-size:14px;font-weight:700;color:var(--white);
+  display:flex;align-items:center;gap:8px;}
+.dash-card-body{padding:16px 20px;}
+
+/* LOGS TABLE */
+.log-table{width:100%;border-collapse:collapse;font-family:monospace;font-size:12px;}
+.log-table th{padding:8px 10px;text-align:left;font-size:10px;color:var(--gray2);
+  letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.05);}
+.log-table td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.03);color:var(--gray);}
+.log-table tr:last-child td{border-bottom:none;}
+.badge-ok{color:var(--green);background:rgba(16,232,154,.1);padding:2px 8px;border-radius:10px;font-size:10px;}
+.badge-fail{color:var(--red);background:rgba(240,96,96,.1);padding:2px 8px;border-radius:10px;font-size:10px;}
+
+/* SECURITY */
+.sec-item{display:flex;align-items:center;justify-content:space-between;
+  padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.sec-item:last-child{border-bottom:none;}
+.sec-label{font-family:monospace;font-size:12px;color:var(--gray);}
+.sec-val{font-family:Syne,sans-serif;font-size:12px;font-weight:700;}
+.sv-ok{color:var(--green);}
+.sv-warn{color:var(--orange);}
+.sv-na{color:var(--gray2);}
+
+/* QUICK ACTIONS */
+.actions-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.action-btn{display:block;background:var(--navy);border:1px solid rgba(255,255,255,.08);
+  border-radius:10px;padding:16px;text-align:center;transition:all .2s;}
+.action-btn:hover{border-color:var(--cyan);background:var(--navy2);}
+.action-btn .a-icon{font-size:24px;display:block;margin-bottom:6px;}
+.action-btn .a-label{font-family:Syne,sans-serif;font-size:12px;font-weight:700;color:var(--white);}
+.action-btn .a-desc{font-family:monospace;font-size:10px;color:var(--gray2);margin-top:2px;}
+
+/* SMPC DEMO */
+.demo-box{background:var(--navy);border-radius:10px;padding:20px;font-family:monospace;font-size:12px;}
+.demo-controls{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.demo-input{background:var(--navy2);border:1px solid rgba(0,212,232,.15);color:var(--white);
+  padding:8px 12px;border-radius:6px;font-family:monospace;font-size:12px;outline:none;width:100px;}
+.demo-input:focus{border-color:var(--cyan);}
+.demo-run{background:var(--cyan);color:var(--navy);border:none;padding:8px 16px;
+  border-radius:6px;font-family:Syne,sans-serif;font-size:12px;font-weight:700;cursor:pointer;}
+.demo-run:hover{background:var(--cyan2);}
+.demo-out{min-height:80px;color:var(--text);line-height:1.8;}
+.demo-share{color:var(--cyan);}
+
+@media(max-width:800px){.stats-row,.dash-grid,.actions-grid{grid-template-columns:1fr;}}
+</style>
+{% endblock %}
+{% block content %}
+<div class="dash-wrap">
+  <div class="dash-header">
+    <div>
+      <div class="dash-welcome">Welcome, {{ current_user.username }} 👋</div>
+      <div class="dash-sub">Last login: {{ current_user.last_login.strftime('%d %b %Y, %H:%M') if current_user.last_login else 'First login' }} · IP: {{ current_user.last_login_ip or 'unknown' }}</div>
+      <div class="dash-role {% if current_user.role and current_user.role.name == 'admin' %}role-admin{% else %}role-user{% endif %}">
+        {% if current_user.role and current_user.role.name == 'admin' %}⭐ Admin{% else %}👤 User{% endif %}
+        {% if current_user.mfa_enabled %} · 🔐 MFA Active{% endif %}
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <a href="{{ url_for('main.profile') }}" style="background:var(--navy2);border:1px solid rgba(255,255,255,.1);color:var(--off);padding:8px 16px;border-radius:8px;font-family:Syne,sans-serif;font-size:13px;font-weight:600;">⚙ Profile</a>
+      {% if not current_user.mfa_enabled %}
+      <a href="{{ url_for('auth.mfa_setup') }}" style="background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.3);color:var(--orange);padding:8px 16px;border-radius:8px;font-family:Syne,sans-serif;font-size:13px;font-weight:600;">Enable MFA →</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card sc-1"><span class="num" id="statUsers">—</span><span class="lbl">Total Users</span><span class="ico">👥</span></div>
+    <div class="stat-card sc-2"><span class="num" id="statOk">—</span><span class="lbl">Successful Logins</span><span class="ico">✅</span></div>
+    <div class="stat-card sc-3"><span class="num" id="statFail">—</span><span class="lbl">Failed Attempts</span><span class="ico">⚠️</span></div>
+    <div class="stat-card sc-4"><span class="num" id="statMfa">—</span><span class="lbl">MFA Enabled</span><span class="ico">🔐</span></div>
+  </div>
+
+  <div class="dash-grid">
+    <!-- Login History -->
+    <div class="dash-card">
+      <div class="dash-card-hdr"><div class="dash-card-title">🕐 Login History</div></div>
+      <div class="dash-card-body">
+        {% if logs %}
+        <table class="log-table">
+          <thead><tr><th>Time</th><th>IP</th><th>Status</th></tr></thead>
+          <tbody>
+            {% for log in logs[:8] %}
+            <tr>
+              <td>{{ log.timestamp.strftime('%d %b %H:%M') }}</td>
+              <td>{{ log.ip_address }}</td>
+              <td>{% if log.success %}<span class="badge-ok">✓ OK</span>{% else %}<span class="badge-fail">✕ Failed</span>{% endif %}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}<p style="color:var(--gray2);font-size:13px;">No login history yet.</p>{% endif %}
+      </div>
+    </div>
+
+    <!-- Security Status -->
+    <div class="dash-card">
+      <div class="dash-card-hdr"><div class="dash-card-title">🛡️ Security Status</div></div>
+      <div class="dash-card-body">
+        <div class="sec-item"><span class="sec-label">Email Verified</span><span class="sec-val sv-ok">✓ Verified</span></div>
+        <div class="sec-item"><span class="sec-label">MFA Status</span><span class="sec-val {% if current_user.mfa_enabled %}sv-ok{% else %}sv-warn{% endif %}">{% if current_user.mfa_enabled %}✓ Enabled{% else %}⚠ Disabled{% endif %}</span></div>
+        <div class="sec-item"><span class="sec-label">Session Protection</span><span class="sec-val sv-ok">✓ Strong</span></div>
+        <div class="sec-item"><span class="sec-label">Cookie Security</span><span class="sec-val sv-ok">✓ HttpOnly</span></div>
+        <div class="sec-item"><span class="sec-label">CSRF Protection</span><span class="sec-val sv-ok">✓ Active</span></div>
+        <div class="sec-item"><span class="sec-label">Account Status</span><span class="sec-val sv-ok">✓ Active</span></div>
+        <div class="sec-item"><span class="sec-label">Role</span><span class="sec-val" style="color:var(--purple);">{{ current_user.role.name|upper if current_user.role else 'USER' }}</span></div>
+        <div class="sec-item"><span class="sec-label">Account Created</span><span class="sec-val sv-na">{{ current_user.created_at.strftime('%d %b %Y') }}</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SMPC Live Demo -->
+  <div class="dash-card" style="margin-bottom:24px;">
+    <div class="dash-card-hdr"><div class="dash-card-title">⚙️ Live SMPC Simulator</div><span style="font-family:monospace;font-size:11px;color:var(--cyan)">Shamir Secret Sharing</span></div>
+    <div class="dash-card-body">
+      <div class="demo-box">
+        <div class="demo-controls">
+          <div><span style="color:var(--gray2);font-size:10px;display:block;margin-bottom:4px;">SECRET</span><input class="demo-input" type="number" id="dSecret" value="99" min="1" max="9999"/></div>
+          <div><span style="color:var(--gray2);font-size:10px;display:block;margin-bottom:4px;">PARTIES (n)</span><input class="demo-input" type="number" id="dParties" value="5" min="2" max="10"/></div>
+          <div><span style="color:var(--gray2);font-size:10px;display:block;margin-bottom:4px;">THRESHOLD (k)</span><input class="demo-input" type="number" id="dThreshold" value="3" min="2" max="10"/></div>
+          <div style="display:flex;align-items:flex-end;"><button class="demo-run" onclick="runDemo()">▶ Run</button></div>
+        </div>
+        <div class="demo-out" id="demoOut"><span style="color:var(--gray2);">Enter parameters and run to see SMPC secret sharing in action...</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="dash-card" style="margin-bottom:24px;">
+    <div class="dash-card-hdr"><div class="dash-card-title">⚡ Quick Actions</div></div>
+    <div class="dash-card-body">
+      <div class="actions-grid">
+        <a href="{{ url_for('main.profile') }}" class="action-btn"><span class="a-icon">🔑</span><div class="a-label">Change Password</div><div class="a-desc">Update credentials</div></a>
+        <a href="{{ url_for('auth.mfa_setup') }}" class="action-btn"><span class="a-icon">📱</span><div class="a-label">{{ 'MFA Active' if current_user.mfa_enabled else 'Enable MFA' }}</div><div class="a-desc">Two-factor security</div></a>
+        <a href="{{ url_for('main.architecture') }}" class="action-btn"><span class="a-icon">🏗️</span><div class="a-label">Architecture</div><div class="a-desc">Explore system design</div></a>
+        <a href="{{ url_for('main.results') }}" class="action-btn"><span class="a-icon">📊</span><div class="a-label">Results</div><div class="a-desc">Performance metrics</div></a>
+        <a href="{{ url_for('main.literature') }}" class="action-btn"><span class="a-icon">📚</span><div class="a-label">Literature</div><div class="a-desc">Research papers</div></a>
+        {% if current_user.role and current_user.role.name == 'admin' %}
+        <a href="{{ url_for('admin.user_list') }}" class="action-btn"><span class="a-icon">👑</span><div class="a-label">Admin Panel</div><div class="a-desc">Manage users & logs</div></a>
+        {% else %}
+        <a href="{{ url_for('main.team') }}" class="action-btn"><span class="a-icon">👥</span><div class="a-label">Team</div><div class="a-desc">Meet the developers</div></a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+// Load stats
+async function loadStats(){
+  try {
+    const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
+    const r = await fetch('/api/stats', {headers:{'X-CSRFToken':csrf||''}});
+    const d = await r.json();
+    document.getElementById('statUsers').textContent = d.total_users;
+    document.getElementById('statOk').textContent = d.successful_logins;
+    document.getElementById('statFail').textContent = d.failed_logins;
+    document.getElementById('statMfa').textContent = d.mfa_enabled;
+  } catch(e) { console.log('Stats unavailable'); }
+}
+loadStats();
+
+// SMPC Demo
+async function runDemo(){
+  const out = document.getElementById('demoOut');
+  out.innerHTML = '<span style="color:var(--cyan)">⚙️ Running simulation...</span>';
+  try {
+    const csrf = document.querySelector('meta[name="csrf-token"]').content;
+    const res = await fetch('/api/smpc/simulate', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-CSRFToken':csrf},
+      body: JSON.stringify({
+        secret: parseInt(document.getElementById('dSecret').value),
+        parties: parseInt(document.getElementById('dParties').value),
+        threshold: parseInt(document.getElementById('dThreshold').value)
+      })
+    });
+    const d = await res.json();
+    if(!res.ok){ out.innerHTML=`<span style="color:var(--red)">Error: ${d.error}</span>`; return; }
+    let html = `<span style="color:var(--gray)">Protocol: <span style="color:var(--white)">${d.protocol}</span> | Threshold: <span style="color:var(--orange)">${d.threshold} of ${d.parties}</span></span>\n\n`;
+    d.shares.forEach(s => {
+      html += `<span class="demo-share">Party ${s.x}</span>  →  x=${s.x}  y=${s.y_masked}\n`;
+    });
+    html += `\n<span style="color:var(--green)">✓ ${d.security_note}</span>`;
+    out.innerHTML = html.replace(/\n/g,'<br>');
+  } catch(e){ out.innerHTML = `<span style="color:var(--red)">Request failed.</span>`; }
+}
+</script>
+{% endblock %}

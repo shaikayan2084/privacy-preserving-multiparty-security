@@ -1,0 +1,422 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block extra_css %}
+<style>
+:root{--font-d:'Syne',sans-serif;--font-m:'JetBrains Mono',monospace;}
+.hero{min-height:calc(100vh - 64px);display:flex;align-items:center;
+  background:var(--navy);position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;z-index:0;}
+.hero-canvas{width:100%;height:100%;}
+.hero-content{position:relative;z-index:1;max-width:1200px;margin:0 auto;
+  padding:80px 32px;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;
+  background:rgba(0,212,232,0.08);border:1px solid rgba(0,212,232,0.25);
+  border-radius:20px;font-family:var(--font-m);font-size:11px;color:var(--cyan);
+  letter-spacing:1px;margin-bottom:28px;}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 8px var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero-h1{font-family:var(--font-d);font-size:clamp(42px,8vw,90px);font-weight:800;
+  color:var(--white);line-height:1.05;letter-spacing:-2px;margin-bottom:14px;}
+.hero-h1 .grad{background:linear-gradient(135deg,var(--cyan),var(--green));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{font-family:var(--font-m);font-size:16px;color:var(--gray);margin-bottom:22px;}
+.hero-desc{max-width:580px;font-size:17px;line-height:1.8;color:var(--text);margin-bottom:40px;}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:60px;}
+.btn-p{display:inline-block;background:var(--cyan);color:var(--navy);padding:14px 28px;
+  border-radius:8px;font-family:var(--font-d);font-size:14px;font-weight:700;
+  box-shadow:0 0 30px rgba(0,212,232,0.3);transition:all .2s;}
+.btn-p:hover{background:var(--cyan2);color:var(--white);transform:translateY(-2px);
+  box-shadow:0 0 50px rgba(0,212,232,0.5);}
+.btn-g{display:inline-block;padding:14px 28px;border-radius:8px;font-family:var(--font-d);
+  font-size:14px;font-weight:700;border:1px solid rgba(255,255,255,0.15);
+  color:var(--off);transition:all .2s;}
+.btn-g:hover{border-color:var(--cyan);color:var(--cyan);}
+
+.hero-stats{display:flex;gap:0;flex-wrap:wrap;}
+.stat-item{padding:0 28px;}
+.stat-item:first-child{padding-left:0;}
+.stat-num{display:block;font-family:var(--font-d);font-size:34px;font-weight:800;
+  color:var(--cyan);letter-spacing:-1px;}
+.stat-lbl{display:block;font-family:var(--font-m);font-size:10px;color:var(--gray2);
+  letter-spacing:1.5px;text-transform:uppercase;}
+.stat-div{width:1px;height:44px;background:rgba(255,255,255,0.1);align-self:center;}
+
+/* SECTIONS */
+.section{padding:100px 0;}
+.container{max-width:1200px;margin:0 auto;padding:0 32px;}
+.section-tag{font-family:var(--font-m);font-size:11px;color:var(--cyan);
+  letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;}
+.section-h2{font-family:var(--font-d);font-size:clamp(30px,4vw,50px);
+  font-weight:800;color:var(--white);margin-bottom:50px;line-height:1.15;}
+.section-h2 .a{color:var(--cyan);}
+
+/* WHAT IS */
+.what-bg{background:var(--navy1);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+.lead-p{font-size:19px;line-height:1.7;color:var(--off);margin-bottom:18px;}
+.body-p{font-size:15px;line-height:1.8;color:var(--text);margin-bottom:14px;}
+.link-a{font-family:var(--font-d);font-size:13px;font-weight:700;color:var(--cyan);}
+.link-a:hover{color:var(--green);}
+
+/* SMPC DIAGRAM */
+.diagram{position:relative;height:340px;}
+.d-node{position:absolute;background:var(--navy2);border:1px solid rgba(0,212,232,0.2);
+  border-radius:12px;padding:14px 18px;display:flex;flex-direction:column;
+  align-items:center;gap:4px;animation:dfloat 4s ease-in-out infinite;cursor:default;
+  transition:all .2s;}
+.d-node:hover{border-color:var(--cyan);box-shadow:0 0 20px rgba(0,212,232,0.2);transform:translateY(-6px)!important;}
+@keyframes dfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.dn-a{top:10px;left:0;animation-delay:0s;}
+.dn-b{top:10px;right:0;animation-delay:.8s;}
+.dn-c{top:45%;left:50%;transform:translate(-50%,-50%);animation:dfloat-c 4s ease-in-out 1.6s infinite;}
+@keyframes dfloat-c{0%,100%{transform:translate(-50%,-50%) translateY(0)}50%{transform:translate(-50%,-50%) translateY(-8px)}}
+.d-icon{font-size:26px;}
+.d-name{font-family:var(--font-d);font-size:12px;font-weight:700;color:var(--white);}
+.d-data{font-family:var(--font-m);font-size:9px;color:var(--gray);letter-spacing:1px;}
+.d-center{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);text-align:center;}
+.d-ring{width:72px;height:72px;border:2px solid var(--cyan);border-radius:50%;
+  margin:0 auto 6px;background:rgba(0,212,232,0.06);animation:spin 8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.d-label{font-family:var(--font-d);font-size:12px;font-weight:700;color:var(--cyan);}
+.d-result{position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;gap:10px;
+  background:rgba(16,232,154,0.08);border:1px solid rgba(16,232,154,0.25);
+  border-radius:10px;padding:10px 18px;white-space:nowrap;}
+.d-result-icon{font-size:18px;}
+.d-result-text{font-family:var(--font-d);font-size:12px;font-weight:700;color:var(--green);line-height:1.4;}
+
+/* PHASES */
+.phases{display:flex;gap:0;}
+.phase{flex:1;background:var(--navy2);border:1px solid rgba(0,212,232,0.1);
+  padding:36px 28px;position:relative;transition:all .25s;}
+.phase:first-child{border-radius:12px 0 0 12px;}
+.phase:last-child{border-radius:0 12px 12px 0;}
+.phase:hover{background:var(--navy3);border-color:var(--cyan);z-index:1;}
+.phase::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--cyan);transform:scaleX(0);transform-origin:left;transition:transform .4s;}
+.phase:hover::before{transform:scaleX(1);}
+.phase-num{font-family:var(--font-m);font-size:52px;font-weight:300;
+  color:rgba(0,212,232,0.07);position:absolute;top:16px;right:16px;line-height:1;}
+.phase-icon{font-size:34px;margin-bottom:14px;}
+.phase h3{font-family:var(--font-d);font-size:19px;font-weight:700;
+  color:var(--white);margin-bottom:10px;}
+.phase p{font-size:13.5px;color:var(--gray);line-height:1.7;margin-bottom:14px;}
+.phase-tech{font-family:var(--font-m);font-size:10px;color:var(--cyan);
+  letter-spacing:1px;padding:3px 10px;background:rgba(0,212,232,0.08);
+  border-radius:20px;display:inline-block;}
+.phase-arr{display:flex;align-items:center;justify-content:center;
+  font-size:26px;color:var(--cyan2);padding:0 3px;flex-shrink:0;}
+
+/* COMPARE */
+.compare-bg{background:var(--navy1);}
+.ctable{width:100%;border-collapse:collapse;font-family:var(--font-m);font-size:13px;}
+.ctable th{padding:13px 18px;background:var(--navy2);text-align:left;
+  font-size:10px;letter-spacing:1px;text-transform:uppercase;
+  border-bottom:2px solid var(--navy3);}
+.ctable th:first-child{color:var(--gray2);}
+.th-he{color:var(--orange);}
+.th-tee{color:var(--purple);}
+.th-smpc{color:var(--cyan);}
+.best{display:inline-block;background:var(--cyan);color:var(--navy);
+  padding:2px 8px;border-radius:10px;font-size:9px;font-weight:700;margin-left:6px;}
+.ctable td{padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--gray);}
+.ctable tr:hover td{background:rgba(255,255,255,0.02);}
+.ctable td:first-child{color:var(--off);font-weight:600;}
+.good{color:var(--green)!important;}
+.ok{color:var(--orange)!important;}
+.bad{color:var(--red)!important;}
+.compare-note{font-size:12px;color:var(--gray2);font-style:italic;text-align:center;margin-top:16px;}
+
+/* USE CASES */
+.uc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+.uc-card{background:var(--navy2);border:1px solid rgba(255,255,255,0.06);
+  border-radius:14px;padding:32px;transition:all .25s;position:relative;overflow:hidden;}
+.uc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.uc-h::before{background:linear-gradient(to right,var(--cyan),var(--green));}
+.uc-f::before{background:linear-gradient(to right,var(--orange),var(--red));}
+.uc-m::before{background:linear-gradient(to right,var(--purple),var(--cyan));}
+.uc-g::before{background:linear-gradient(to right,var(--green),var(--cyan2));}
+.uc-card:hover{border-color:rgba(0,212,232,0.25);transform:translateY(-4px);
+  box-shadow:0 8px 40px rgba(0,0,0,0.4);}
+.uc-icon{font-size:34px;margin-bottom:12px;}
+.uc-card h3{font-family:var(--font-d);font-size:17px;font-weight:700;
+  color:var(--white);margin-bottom:9px;}
+.uc-card p{font-size:14px;color:var(--gray);line-height:1.7;margin-bottom:14px;}
+.uc-tag{font-family:var(--font-m);font-size:10px;color:var(--cyan2);letter-spacing:1px;
+  border:1px solid rgba(0,212,232,0.2);border-radius:20px;padding:3px 10px;display:inline-block;}
+
+/* SIMULATOR */
+.sim-bg{background:var(--navy);}
+.sim-box{background:var(--navy2);border:1px solid rgba(0,212,232,0.15);
+  border-radius:16px;overflow:hidden;}
+.sim-header{background:var(--navy3);padding:16px 24px;
+  font-family:var(--font-m);font-size:12px;color:var(--cyan);
+  display:flex;align-items:center;gap:10px;}
+.sim-dot{width:8px;height:8px;border-radius:50%;animation:pulse 1.5s infinite;}
+.sim-controls{padding:28px 24px;display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:16px;
+  align-items:end;border-bottom:1px solid rgba(255,255,255,0.06);}
+.sim-field label{display:block;font-family:var(--font-m);font-size:10px;color:var(--gray);
+  letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;}
+.sim-field input{width:100%;background:var(--navy);border:1px solid rgba(0,212,232,0.15);
+  color:var(--white);padding:10px 14px;border-radius:8px;font-family:var(--font-m);
+  font-size:13px;outline:none;transition:border .2s;}
+.sim-field input:focus{border-color:var(--cyan);}
+.sim-run{background:var(--cyan);color:var(--navy);border:none;padding:10px 22px;
+  border-radius:8px;font-family:var(--font-d);font-size:13px;font-weight:700;
+  cursor:pointer;transition:all .2s;align-self:end;height:42px;}
+.sim-run:hover{background:var(--cyan2);}
+.sim-output{padding:24px;min-height:160px;font-family:var(--font-m);font-size:12px;
+  color:var(--text);line-height:1.8;}
+.sim-placeholder{color:var(--gray2);font-style:italic;}
+.sim-result{display:flex;flex-direction:column;gap:10px;}
+.sim-share{display:flex;align-items:center;gap:10px;
+  background:var(--navy);border-radius:6px;padding:8px 12px;}
+.share-idx{color:var(--orange);width:24px;font-weight:700;}
+.share-x{color:var(--gray2);}
+.share-y{color:var(--cyan);flex:1;}
+.sim-note{font-size:11px;color:var(--green);margin-top:8px;padding:8px 12px;
+  background:rgba(16,232,154,0.06);border-radius:6px;border-left:2px solid var(--green);}
+
+/* CTA */
+.cta-box{background:linear-gradient(135deg,var(--navy2),var(--navy3));
+  border:1px solid rgba(0,212,232,0.2);border-radius:20px;padding:60px;
+  display:flex;align-items:center;justify-content:space-between;gap:40px;}
+.cta-box h2{font-family:var(--font-d);font-size:30px;font-weight:800;
+  color:var(--white);margin-bottom:8px;}
+.cta-box p{color:var(--gray);max-width:380px;font-size:14px;}
+.cta-btns{display:flex;gap:12px;flex-wrap:wrap;flex-shrink:0;}
+
+@media(max-width:900px){
+  .two-col,.uc-grid{grid-template-columns:1fr;}
+  .phases{flex-direction:column;}
+  .phase-arr{transform:rotate(90deg);align-self:center;}
+  .cta-box{flex-direction:column;}
+  .sim-controls{grid-template-columns:1fr 1fr;}
+}
+</style>
+{% endblock %}
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+  <canvas class="hero-canvas" id="heroCanvas" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;"></canvas>
+  <div class="hero-content">
+    <div class="hero-badge"><span class="badge-dot"></span>B.Tech Final Year Project · VVIT Nambur · Dept. CIC · A.Y. 2025–2026</div>
+    <h1 class="hero-h1">Privacy-Preserving<br/><span class="grad">Data Collaboration</span></h1>
+    <p class="hero-sub">via <strong style="color:var(--white)">Secure Multi-Party Computation (SMPC)</strong></p>
+    <p class="hero-desc">A cloud-ready framework enabling multiple organizations to jointly compute results over sensitive data — without ever exposing private inputs. No trust required. No raw data shared.</p>
+    <div class="hero-btns">
+      <a href="{{ url_for('main.architecture') }}" class="btn-p">Explore Architecture →</a>
+      <a href="{{ url_for('main.results') }}" class="btn-g">View Results</a>
+      {% if not current_user.is_authenticated %}
+      <a href="{{ url_for('auth.signup') }}" class="btn-g">Get Access</a>
+      {% endif %}
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item"><span class="stat-num">65%</span><span class="stat-lbl">Lower cost vs HE</span></div>
+      <div class="stat-div"></div>
+      <div class="stat-item"><span class="stat-num">&lt;1.5s</span><span class="stat-lbl">Response time</span></div>
+      <div class="stat-div"></div>
+      <div class="stat-item"><span class="stat-num">35%</span><span class="stat-lbl">Overhead reduction</span></div>
+      <div class="stat-div"></div>
+      <div class="stat-item"><span class="stat-num">&lt;1.8%</span><span class="stat-lbl">ML accuracy loss</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT IS SMPC -->
+<section class="section what-bg">
+  <div class="container">
+    <div class="section-tag">THE CORE CONCEPT</div>
+    <h2 class="section-h2">What is <span class="a">SMPC</span>?</h2>
+    <div class="two-col">
+      <div>
+        <p class="lead-p">Secure Multi-Party Computation (SMPC) lets multiple parties <strong style="color:var(--white)">jointly compute a function</strong> over their inputs while keeping each party's data completely <strong style="color:var(--white)">private</strong>.</p>
+        <p class="body-p">Three hospitals want to find the average patient recovery rate across their combined data — but none wants to share records. SMPC makes this possible, computing the result <em style="color:var(--cyan)">without any party ever seeing another's raw data.</em></p>
+        <p class="body-p">Our project builds a cloud-ready, containerized framework integrating SMPC with Kubernetes orchestration, Shamir's Secret Sharing, and ML inference — tested across healthcare, finance, and federated learning workloads.</p>
+        <a href="{{ url_for('main.about') }}" class="link-a">Read full introduction →</a>
+      </div>
+      <div class="diagram">
+        <div class="d-node dn-a"><span class="d-icon">🏥</span><span class="d-name">Hospital A</span><span class="d-data">Private Data</span></div>
+        <div class="d-node dn-b"><span class="d-icon">🏦</span><span class="d-name">Bank B</span><span class="d-data">Private Data</span></div>
+        <div class="d-node dn-c"><span class="d-icon">🏛️</span><span class="d-name">Gov. C</span><span class="d-data">Private Data</span></div>
+        <div class="d-center"><div class="d-ring"></div><div class="d-label">SMPC<br/>Protocol</div></div>
+        <div class="d-result"><span class="d-result-icon">✅</span><div class="d-result-text">Shared Result<br/><span style="color:var(--gray);font-size:10px">No raw data exposed</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THREE PHASES -->
+<section class="section">
+  <div class="container">
+    <div class="section-tag">WORKFLOW</div>
+    <h2 class="section-h2">How It <span class="a">Works</span></h2>
+    <div class="phases">
+      <div class="phase"><div class="phase-num">01</div><div class="phase-icon">🔀</div><h3>Input Sharing</h3><p>Data owners split sensitive datasets into cryptographic shares using <strong style="color:var(--white)">Shamir's Secret Sharing</strong>. Distributed to cloud nodes — raw data never leaves the client.</p><div class="phase-tech">Shamir SSS · AES-256-GCM</div></div>
+      <div class="phase-arr">›</div>
+      <div class="phase"><div class="phase-num">02</div><div class="phase-icon">⚙️</div><h3>Secure Computation</h3><p>Cloud nodes execute SMPC protocols on shares — exchanging only <strong style="color:var(--white)">encrypted intermediate values</strong>. No node sees another party's data.</p><div class="phase-tech">BGW Protocol · TLS · EasySMPC</div></div>
+      <div class="phase-arr">›</div>
+      <div class="phase"><div class="phase-num">03</div><div class="phase-icon">🔗</div><h3>Output Reconstruction</h3><p>Partial results combined via <strong style="color:var(--white)">Lagrange interpolation</strong> to reconstruct the final output. Only authorized parties receive it.</p><div class="phase-tech">Lagrange · Threshold-k</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE SMPC SIMULATOR -->
+<section class="section sim-bg">
+  <div class="container">
+    <div class="section-tag">INTERACTIVE DEMO</div>
+    <h2 class="section-h2">Live SMPC <span class="a">Simulator</span></h2>
+    {% if current_user.is_authenticated %}
+    <div class="sim-box">
+      <div class="sim-header">
+        <span class="sim-dot" style="background:var(--green);box-shadow:0 0 6px var(--green);"></span>
+        SMPC Engine · Shamir Secret Sharing over GF(2³¹-1)
+      </div>
+      <div class="sim-controls">
+        <div class="sim-field"><label>Secret Value</label><input type="number" id="simSecret" value="42" min="1" max="9999"/></div>
+        <div class="sim-field"><label>Parties (n)</label><input type="number" id="simParties" value="5" min="2" max="10"/></div>
+        <div class="sim-field"><label>Threshold (k)</label><input type="number" id="simThreshold" value="3" min="2" max="10"/></div>
+        <button class="sim-run" onclick="runSim()">▶ Run SMPC</button>
+      </div>
+      <div class="sim-output" id="simOutput"><p class="sim-placeholder">Enter parameters and click Run SMPC to simulate secret sharing...</p></div>
+    </div>
+    {% else %}
+    <div class="sim-box">
+      <div class="sim-header"><span class="sim-dot" style="background:var(--red);box-shadow:0 0 6px var(--red);"></span>Login required to access simulator</div>
+      <div class="sim-output" style="text-align:center;padding:40px;">
+        <p style="font-size:15px;color:var(--gray);margin-bottom:20px;">Create an account or log in to run the interactive SMPC simulator.</p>
+        <a href="{{ url_for('auth.signup') }}" class="btn-p" style="margin-right:12px;">Sign Up Free</a>
+        <a href="{{ url_for('auth.login') }}" class="btn-g">Login</a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- COMPARISON TABLE -->
+<section class="section compare-bg">
+  <div class="container">
+    <div class="section-tag">COMPARATIVE ANALYSIS</div>
+    <h2 class="section-h2">SMPC vs <span class="a">Alternatives</span></h2>
+    <div style="overflow-x:auto;">
+    <table class="ctable">
+      <thead>
+        <tr>
+          <th>Aspect</th>
+          <th class="th-he">Homomorphic Encryption</th>
+          <th class="th-tee">Trusted Execution Env.</th>
+          <th class="th-smpc">SMPC <span class="best">Our Approach</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Computation Efficiency</td><td class="bad">Very high overhead</td><td class="ok">Efficient (inside enclave)</td><td class="good">Moderate, optimized</td></tr>
+        <tr><td>Latency</td><td class="bad">High — impractical real-time</td><td class="ok">Low (limited scalability)</td><td class="good">Near real-time &lt;1.5s</td></tr>
+        <tr><td>Scalability</td><td class="bad">Poor with many parties</td><td class="bad">Limited by enclave size</td><td class="good">Highly scalable</td></tr>
+        <tr><td>Security Guarantees</td><td class="ok">Strong crypto, costly</td><td class="bad">Side-channel vulnerable</td><td class="good">Strong adversarial resilience</td></tr>
+        <tr><td>Cloud Practicality</td><td class="bad">Largely theoretical</td><td class="ok">Hardware constrained</td><td class="good">Multi-tenant demonstrated</td></tr>
+        <tr><td>Cross-Org Collaboration</td><td class="bad">Not easily supported</td><td class="bad">Not easily supported</td><td class="good">Core use case</td></tr>
+        <tr><td>Compute Cost vs HE</td><td class="bad">Baseline (15× slower)</td><td class="ok">~5× HE throughput</td><td class="good">65% less cost vs HE</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="compare-note">Source: Ravi Chandra Thota (2025). <em>Enabling Confidential Cloud Services through SMPC.</em> IRJMETS Vol.07/Issue:10. DOI: 10.56726/IRJMETS83393</p>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section class="section">
+  <div class="container">
+    <div class="section-tag">APPLICATIONS</div>
+    <h2 class="section-h2">Real-World <span class="a">Use Cases</span></h2>
+    <div class="uc-grid">
+      <div class="uc-card uc-h"><div class="uc-icon">🏥</div><h3>Healthcare</h3><p>Multiple hospitals aggregate patient data for disease research — discovering patterns without sharing individual health records. Enables privacy-compliant collaboration under HIPAA & GDPR.</p><span class="uc-tag">Electronic Health Records · Clinical Trials</span></div>
+      <div class="uc-card uc-f"><div class="uc-icon">💳</div><h3>Financial Fraud Detection</h3><p>Banks jointly train fraud detection models using transaction data — without exposing customer details. Real-time collaborative analytics on encrypted financial datasets with zero privacy loss.</p><span class="uc-tag">Credit Risk · Fraud Analysis · KYC</span></div>
+      <div class="uc-card uc-m"><div class="uc-icon">🤖</div><h3>Federated Machine Learning</h3><p>Organizations collaboratively train ML models. Our experiments show accuracy variance below 1.8% vs centralized training — privacy at nearly zero utility cost.</p><span class="uc-tag">Logistic Regression · Neural Networks</span></div>
+      <div class="uc-card uc-g"><div class="uc-icon">🏛️</div><h3>Government & Compliance</h3><p>Cross-agency data analysis while maintaining strict privacy separations. Cryptographic guarantees satisfy GDPR and CCPA requirements without policy trade-offs.</p><span class="uc-tag">GDPR · CCPA · Cross-Agency Analytics</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section" style="padding:40px 0 100px;">
+  <div class="container">
+    <div class="cta-box">
+      <div>
+        <h2>Explore the Full System</h2>
+        <p>Dive into architecture, threat models, performance benchmarks, and the literature that supports this research.</p>
+      </div>
+      <div class="cta-btns">
+        <a href="{{ url_for('main.architecture') }}" class="btn-p">Architecture →</a>
+        <a href="{{ url_for('main.results') }}" class="btn-g">Results →</a>
+        <a href="{{ url_for('main.literature') }}" class="btn-g">Literature →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+{% block extra_js %}
+<script>
+// Particle canvas
+const canvas = document.getElementById('heroCanvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [];
+function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = canvas.parentElement?.offsetHeight || window.innerHeight; }
+resize(); window.addEventListener('resize', resize);
+class P {
+  constructor(){ this.reset(); }
+  reset(){ this.x=Math.random()*W; this.y=Math.random()*H;
+    this.r=Math.random()*1.5+0.3; this.vx=(Math.random()-.5)*.4;
+    this.vy=(Math.random()-.5)*.4; this.alpha=Math.random()*.5+.1; }
+  update(){ this.x+=this.vx; this.y+=this.vy;
+    if(this.x<0||this.x>W||this.y<0||this.y>H) this.reset(); }
+  draw(){ ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(0,212,232,${this.alpha})`; ctx.fill(); }
+}
+for(let i=0;i<120;i++) particles.push(new P());
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  // Connections
+  for(let i=0;i<particles.length;i++)
+    for(let j=i+1;j<particles.length;j++){
+      const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if(d<100){ ctx.strokeStyle=`rgba(0,212,232,${0.08*(1-d/100)})`;
+        ctx.lineWidth=.5; ctx.beginPath();
+        ctx.moveTo(particles[i].x,particles[i].y);
+        ctx.lineTo(particles[j].x,particles[j].y); ctx.stroke(); }
+    }
+  particles.forEach(p=>{ p.update(); p.draw(); });
+  requestAnimationFrame(draw);
+}
+draw();
+
+// SMPC Simulator
+async function runSim(){
+  const secret = document.getElementById('simSecret').value;
+  const parties = document.getElementById('simParties').value;
+  const threshold = document.getElementById('simThreshold').value;
+  const out = document.getElementById('simOutput');
+  out.innerHTML = '<p style="color:var(--cyan)">⚙️ Running SMPC simulation...</p>';
+  try {
+    const csrf = document.querySelector('meta[name="csrf-token"]').content;
+    const res = await fetch('/api/smpc/simulate', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-CSRFToken':csrf},
+      body: JSON.stringify({secret:parseInt(secret), parties:parseInt(parties), threshold:parseInt(threshold)})
+    });
+    const data = await res.json();
+    if(!res.ok){ out.innerHTML=`<p style="color:var(--red)">Error: ${data.error}</p>`; return; }
+    let html = `<div class="sim-result">
+      <p style="color:var(--gray);margin-bottom:8px;">Secret split into <strong style="color:var(--cyan)">${data.parties} shares</strong> · Threshold: <strong style="color:var(--orange)">${data.threshold}</strong> · Protocol: <strong style="color:var(--white)">${data.protocol}</strong></p>`;
+    data.shares.forEach(s => {
+      html += `<div class="sim-share"><span class="share-idx">P${s.x}</span><span class="share-x">x=${s.x}</span><span class="share-y">y = ${s.y_masked}</span><span style="color:var(--gray2);font-size:10px;">masked for security</span></div>`;
+    });
+    html += `<p class="sim-note">🔒 ${data.security_note}</p></div>`;
+    out.innerHTML = html;
+  } catch(e){ out.innerHTML=`<p style="color:var(--red)">Request failed. Make sure you're logged in.</p>`; }
+}
+</script>
+{% endblock %}

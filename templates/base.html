@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="csrf-token" content="{{ csrf_token() }}"/>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none';"/>
+  <meta http-equiv="X-Content-Type-Options" content="nosniff"/>
+  <meta http-equiv="X-Frame-Options" content="DENY"/>
+  <title>{% block title %}SMPC Shield{% endblock %} — Privacy-Preserving Data Collaboration</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}"/>
+  <style>
+    :root {
+      --navy:#040d18;--navy1:#071427;--navy2:#0a1e38;--navy3:#0f2645;
+      --cyan:#00d4e8;--cyan2:#00a8bb;--green:#10e89a;--orange:#f5a623;
+      --red:#f06060;--purple:#9b72f0;--white:#ffffff;--off:#e8f2f8;
+      --gray:#8aa4bc;--gray2:#536b82;--text:#cce0f0;
+      --font-d:'Syne',sans-serif;--font-m:'JetBrains Mono',monospace;
+      --font-b:'Lora',Georgia,serif;
+    }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{background:var(--navy);color:var(--text);font-family:var(--font-b);min-height:100vh;}
+    a{color:var(--cyan);text-decoration:none;}a:hover{color:var(--white);}
+    ::-webkit-scrollbar{width:5px;}
+    ::-webkit-scrollbar-track{background:var(--navy);}
+    ::-webkit-scrollbar-thumb{background:var(--navy3);border-radius:3px;}
+
+    /* NAV */
+    .navbar{position:fixed;top:0;left:0;right:0;z-index:1000;
+      background:rgba(4,13,24,0.95);backdrop-filter:blur(20px);
+      border-bottom:1px solid rgba(0,212,232,0.1);}
+    .nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;
+      display:flex;align-items:center;height:64px;gap:24px;}
+    .nav-brand{display:flex;align-items:center;gap:10px;color:var(--white);flex-shrink:0;}
+    .brand-icon{font-size:22px;}
+    .brand-name{font-family:var(--font-d);font-size:17px;font-weight:800;}
+    .brand-name span{color:var(--cyan);}
+    .brand-sub{font-size:9px;color:var(--gray);font-family:var(--font-m);letter-spacing:1px;}
+    .nav-links{display:flex;align-items:center;gap:2px;list-style:none;margin-left:auto;}
+    .nav-links a{padding:6px 13px;border-radius:6px;font-family:var(--font-d);font-size:13px;
+      font-weight:600;color:var(--gray);transition:all .2s;}
+    .nav-links a:hover,.nav-links a.active{color:var(--white);background:rgba(0,212,232,0.08);}
+    .nav-links a.active{color:var(--cyan);}
+    .nav-auth{display:flex;align-items:center;gap:8px;margin-left:16px;}
+    .btn-nav{padding:7px 16px;border-radius:7px;font-family:var(--font-d);
+      font-size:12px;font-weight:700;transition:all .2s;border:none;cursor:pointer;}
+    .btn-nav-ghost{background:transparent;color:var(--gray);
+      border:1px solid rgba(255,255,255,0.12);}
+    .btn-nav-ghost:hover{border-color:var(--cyan);color:var(--cyan);}
+    .btn-nav-solid{background:var(--cyan);color:var(--navy);}
+    .btn-nav-solid:hover{background:var(--cyan2);}
+    .user-chip{display:flex;align-items:center;gap:8px;
+      padding:5px 12px;border-radius:20px;
+      background:rgba(0,212,232,0.08);border:1px solid rgba(0,212,232,0.2);}
+    .user-dot{width:7px;height:7px;border-radius:50%;background:var(--green);
+      box-shadow:0 0 6px var(--green);animation:blink 2s infinite;}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+    .user-name{font-family:var(--font-m);font-size:11px;color:var(--cyan);}
+    .user-role{font-family:var(--font-m);font-size:9px;color:var(--gray2);}
+
+    /* FLASH */
+    .flashes{position:fixed;top:74px;right:20px;z-index:999;display:flex;flex-direction:column;gap:8px;}
+    .flash-msg{padding:12px 18px;border-radius:8px;font-family:var(--font-m);font-size:12px;
+      display:flex;align-items:center;gap:10px;
+      box-shadow:0 4px 20px rgba(0,0,0,0.4);animation:slideIn .3s ease;min-width:280px;}
+    @keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+    .flash-success{background:rgba(16,232,154,0.12);border:1px solid rgba(16,232,154,0.3);color:var(--green);}
+    .flash-danger{background:rgba(240,96,96,0.12);border:1px solid rgba(240,96,96,0.3);color:var(--red);}
+    .flash-info{background:rgba(0,212,232,0.1);border:1px solid rgba(0,212,232,0.25);color:var(--cyan);}
+    .flash-warning{background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.25);color:var(--orange);}
+    .flash-close{background:none;border:none;cursor:pointer;color:inherit;font-size:16px;margin-left:auto;}
+
+    /* MAIN */
+    .page-wrap{padding-top:64px;min-height:100vh;}
+
+    /* FOOTER */
+    footer{background:var(--navy1);border-top:1px solid rgba(255,255,255,0.06);padding:32px 24px;margin-top:40px;}
+    .footer-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;
+      align-items:center;flex-wrap:wrap;gap:16px;}
+    .footer-brand{font-family:var(--font-d);font-size:14px;font-weight:700;color:var(--white);}
+    .footer-brand span{color:var(--cyan);}
+    .footer-copy{font-family:var(--font-m);font-size:10px;color:var(--gray2);letter-spacing:.5px;}
+    .footer-links{display:flex;gap:20px;}
+    .footer-links a{font-family:var(--font-m);font-size:11px;color:var(--gray2);letter-spacing:1px;text-transform:uppercase;}
+    .footer-links a:hover{color:var(--cyan);}
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="{{ url_for('main.index') }}" class="nav-brand">
+      <span class="brand-icon">🔐</span>
+      <div>
+        <div class="brand-name">SMPC<span>Shield</span></div>
+        <div class="brand-sub">Privacy-Preserving Collaboration</div>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="{{ url_for('main.index') }}" {% if request.endpoint=='main.index' %}class="active"{% endif %}>Home</a></li>
+      <li><a href="{{ url_for('main.about') }}" {% if request.endpoint=='main.about' %}class="active"{% endif %}>About</a></li>
+      <li><a href="{{ url_for('main.literature') }}" {% if request.endpoint=='main.literature' %}class="active"{% endif %}>Literature</a></li>
+      <li><a href="{{ url_for('main.architecture') }}" {% if request.endpoint=='main.architecture' %}class="active"{% endif %}>Architecture</a></li>
+      <li><a href="{{ url_for('main.results') }}" {% if request.endpoint=='main.results' %}class="active"{% endif %}>Results</a></li>
+      <li><a href="{{ url_for('main.team') }}" {% if request.endpoint=='main.team' %}class="active"{% endif %}>Team</a></li>
+      {% if current_user.is_authenticated %}
+      <li><a href="{{ url_for('main.dashboard') }}" {% if 'dashboard' in request.endpoint %}class="active"{% endif %}>Dashboard</a></li>
+      {% endif %}
+    </ul>
+    <div class="nav-auth">
+      {% if current_user.is_authenticated %}
+        <div class="user-chip">
+          <div class="user-dot"></div>
+          <div>
+            <div class="user-name">{{ current_user.username }}</div>
+            <div class="user-role">{{ current_user.role.name if current_user.role else 'user' }}</div>
+          </div>
+        </div>
+        <a href="{{ url_for('auth.logout') }}" class="btn-nav btn-nav-ghost">Logout</a>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}" class="btn-nav btn-nav-ghost">Login</a>
+        <a href="{{ url_for('auth.signup') }}" class="btn-nav btn-nav-solid">Sign Up</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+<!-- Flash Messages -->
+<div class="flashes">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="flash-msg flash-{{ category }}">
+        <span>{% if category=='success' %}✓{% elif category=='danger' %}✕{% else %}ℹ{% endif %}</span>
+        <span>{{ message }}</span>
+        <button class="flash-close" onclick="this.parentElement.remove()">×</button>
+      </div>
+    {% endfor %}
+  {% endwith %}
+</div>
+
+<div class="page-wrap">
+  {% block content %}{% endblock %}
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">SMPC<span>Shield</span> — Privacy-Preserving Data Collaboration</div>
+    <div class="footer-links">
+      <a href="{{ url_for('main.index') }}">Home</a>
+      <a href="{{ url_for('main.about') }}">About</a>
+      <a href="{{ url_for('main.architecture') }}">Architecture</a>
+      <a href="{{ url_for('main.team') }}">Team</a>
+    </div>
+    <div class="footer-copy">A.Y. 2025–2026 · B.Tech Final Year · VVIT Nambur · Dept. CIC</div>
+  </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block title %}Literature{% endblock %}
+{% block extra_css %}<style>
+.ph{padding:120px 0 70px;background:var(--navy1);border-bottom:1px solid rgba(0,212,232,.1);}
+.wrap{max-width:1100px;margin:0 auto;padding:0 32px;}
+.ph-tag{font-family:monospace;font-size:11px;color:var(--cyan);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;}
+.ph-title{font-family:Syne,sans-serif;font-size:clamp(36px,6vw,64px);font-weight:800;color:var(--white);line-height:1.1;margin-bottom:16px;}
+.ph-desc{font-size:17px;color:var(--gray);max-width:600px;line-height:1.8;}
+.sec{padding:80px 0;}
+.sec-tag{font-family:monospace;font-size:11px;color:var(--cyan);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;}
+.sec-h{font-family:Syne,sans-serif;font-size:clamp(26px,4vw,42px);font-weight:800;color:var(--white);margin-bottom:36px;}
+.sec-h .a{color:var(--cyan);}
+.papers{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+.paper{background:var(--navy2);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:28px;transition:all .2s;position:relative;overflow:hidden;}
+.paper::before{content:'';position:absolute;top:0;left:0;bottom:0;width:4px;}
+.p1::before{background:var(--cyan);}.p2::before{background:var(--green);}
+.p3::before{background:var(--orange);}.p4::before{background:var(--purple);}
+.p5::before{background:var(--red);}.p6::before{background:var(--cyan);}
+.p7::before{background:var(--green);}.p8::before{background:var(--orange);}
+.p9::before{background:var(--purple);}.p10::before{background:var(--red);}
+.p11::before{background:var(--cyan);}
+.paper:hover{border-color:rgba(0,212,232,.25);transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,.3);}
+.paper-num{font-family:monospace;font-size:11px;color:var(--cyan);letter-spacing:2px;margin-bottom:6px;}
+.paper h3{font-family:Syne,sans-serif;font-size:15px;font-weight:700;color:var(--white);margin-bottom:5px;line-height:1.4;}
+.paper-author{font-family:monospace;font-size:11px;color:var(--gray2);margin-bottom:14px;}
+.paper-conclusion{font-size:13px;color:var(--gray);line-height:1.7;margin-bottom:12px;}
+.paper-relevance{font-size:12.5px;color:var(--off);line-height:1.65;padding-top:12px;border-top:1px solid rgba(255,255,255,.06);font-style:italic;}
+.paper-relevance::before{content:'↳ Relevance: ';color:var(--cyan);font-style:normal;font-weight:700;font-size:11px;font-family:monospace;}
+.featured{background:linear-gradient(135deg,var(--navy2),rgba(0,212,232,.06));border-color:rgba(0,212,232,.25)!important;grid-column:1/-1;}
+.feat-badge{display:inline-block;background:var(--cyan);color:var(--navy);padding:3px 10px;border-radius:10px;font-family:monospace;font-size:10px;font-weight:700;margin-bottom:10px;letter-spacing:1px;}
+@media(max-width:800px){.papers{grid-template-columns:1fr;}.featured{grid-column:1;}}
+</style>{% endblock %}
+{% block content %}
+<div class="ph"><div class="wrap">
+  <div class="ph-tag">Academic Foundation</div>
+  <h1 class="ph-title">Literature Review</h1>
+  <p class="ph-desc">Key research papers that form the theoretical and practical foundation of this project, reviewed for their contributions to SMPC and privacy-preserving computation.</p>
+</div></div>
+
+<section class="sec" style="background:var(--navy1);"><div class="wrap">
+  <div class="sec-tag">Research Papers</div>
+  <h2 class="sec-h">Papers <span class="a">Reviewed</span></h2>
+  <div class="papers">
+
+    <!-- FEATURED -->
+    <div class="paper featured p1">
+      <div class="feat-badge">PRIMARY REFERENCE · 2025</div>
+      <div class="paper-num">REF 11</div>
+      <h3>Enabling Confidential Cloud Services through Secure Multi-Party Computation</h3>
+      <div class="paper-author">Ravi Chandra Thota · IRJMETS Vol.07/Issue:10, October 2025 · DOI: 10.56726/IRJMETS83393</div>
+      <div class="paper-conclusion">Proposes and evaluates a containerized SMPC framework for cloud environments. Integrates Shamir Secret Sharing, BGW protocol, Docker/Kubernetes orchestration. Results: &lt;1.5s latency, 35% overhead reduction via pre-computed triples, &lt;1.8% ML accuracy loss, 65% cost reduction vs HE, ~80% TEE throughput without hardware dependencies.</div>
+      <div class="paper-relevance">This is the primary reference for our proposed system architecture, threat model, performance metrics, and comparative analysis. All experimental benchmarks cited in this project originate from this paper.</div>
+    </div>
+
+    <div class="paper p2">
+      <div class="paper-num">01</div>
+      <h3>Secure Multi-Party Computation (SMPC) For Privacy-Preserving Data Analysis</h3>
+      <div class="paper-author">Umang H. Patel · 2024</div>
+      <div class="paper-conclusion">Complete overview of SMPC — covers secret sharing, homomorphic encryption as building blocks, real-world applications in medical research and finance, and compares SMPC to other privacy tools. Discusses computational overhead and scalability challenges.</div>
+      <div class="paper-relevance">Validates our choice of SMPC and informed our understanding of the technology's limitations, particularly regarding performance and scalability trade-offs that we address in our proposed framework.</div>
+    </div>
+
+    <div class="paper p3">
+      <div class="paper-num">02</div>
+      <h3>A Pragmatic Introduction to Secure Multi-Party Computation</h3>
+      <div class="paper-author">David Evans, Vladimir Kolesnikov, Mike Rosulek · 2021</div>
+      <div class="paper-conclusion">Foundational text that breaks down SMPC from first principles using the classic Millionaires' Problem. Covers garbled circuits, secret sharing, and oblivious transfer. Provides the shared vocabulary for discussing SMPC protocols.</div>
+      <div class="paper-relevance">Our "SMPC 101" guidebook. Ensures the entire team shares understanding of the fundamental protocols. Informed our choice between secret sharing vs. garbled circuit approaches for our specific use case.</div>
+    </div>
+
+    <div class="paper p4">
+      <div class="paper-num">03</div>
+      <h3>Secure Multi-Party Computation in Finance</h3>
+      <div class="paper-author">Bissyandé et al. · 2022</div>
+      <div class="paper-conclusion">Moves SMPC from theory to high-stakes finance. Details collaborative fraud detection (multiple banks pooling transaction data) and credit risk analysis. Examines practical challenges: GDPR compliance, latency requirements, legacy IT integration.</div>
+      <div class="paper-relevance">Real-world case studies directly applicable to our financial workload. Their solutions to performance and scalability challenges informed our infrastructure design and helped us anticipate computational resource requirements.</div>
+    </div>
+
+    <div class="paper p5">
+      <div class="paper-num">04</div>
+      <h3>Survey of Privacy-Preserving Deep Learning</h3>
+      <div class="paper-author">Ang Li et al. · 2022</div>
+      <div class="paper-conclusion">Broad survey comparing SMPC, Federated Learning, and Differential Privacy for training deep learning models. Details pros/cons of each — SMPC provides exact computation, FL keeps data local, DP adds statistical noise.</div>
+      <div class="paper-relevance">Guided our selection of SMPC for ML workloads. Enabled a "defense-in-depth" strategy: using FL as primary architecture with SMPC layered on top for secure model update aggregation.</div>
+    </div>
+
+    <div class="paper p6">
+      <div class="paper-num">05</div>
+      <h3>High-Efficiency SMPC Protocols</h3>
+      <div class="paper-author">Damgård, Keller, Orsini · 2023</div>
+      <div class="paper-conclusion">Tackles performance as the biggest barrier to SMPC adoption. Introduces optimized protocols reducing computational workload and communication overhead significantly. Makes SMPC feasible for real-time bidding, large-scale analytics, and high-frequency financial modeling.</div>
+      <div class="paper-relevance">Critical for our performance targets. The high-efficiency protocols described — particularly Beaver triple pre-computation — are directly implemented in our framework, contributing to the 35% overhead reduction we observed.</div>
+    </div>
+
+    <div class="paper p7">
+      <div class="paper-num">06</div>
+      <h3>Practical Trade-offs in Real-World SMPC Deployment</h3>
+      <div class="paper-author">Baum, Orsini, Scholl · 2021</div>
+      <div class="paper-conclusion">Bridge between abstract SMPC theory and real-world engineering. Covers balancing security level (honest-but-curious vs. malicious), performance requirements, and developer usability. Shares lessons from real deployments including network instability and framework selection pitfalls.</div>
+      <div class="paper-relevance">Guided our architectural decisions — particularly the choice of honest-but-curious threat model for initial deployment and selection of EasySMPC framework for developer ergonomics alongside cryptographic soundness.</div>
+    </div>
+
+    <div class="paper p8">
+      <div class="paper-num">07</div>
+      <h3>State of SMPC: Maturity and Commercial Adoption (2023 Review)</h3>
+      <div class="paper-author">Hinkelmann et al. · 2023</div>
+      <div class="paper-conclusion">Timely overview arguing SMPC has reached commercial maturity. Highlights performance improvements of 100–1000× over a decade. Surveys new open-source frameworks, adoption across healthcare, advertising, and government sectors.</div>
+      <div class="paper-relevance">Confirmed our decision to use SMPC is strategically aligned with industry trends. Provides confidence in long-term viability and growing ecosystem of tools, and informed our roadmap for future framework integrations.</div>
+    </div>
+
+    <div class="paper p9">
+      <div class="paper-num">08</div>
+      <h3>SMPC + Blockchain for Decentralized Data Markets</h3>
+      <div class="paper-author">Yannan Liu et al. · 2022</div>
+      <div class="paper-conclusion">Explores combining SMPC (computational privacy) with blockchain (public verifiability). The blockchain serves as trusted coordinator and immutable audit log while SMPC handles the private computation component.</div>
+      <div class="paper-relevance">Inspired our consideration of blockchain for audit trail functionality. The combined architecture aligns with our system's goal of trustless, decentralized collaboration — potential future enhancement to our framework.</div>
+    </div>
+
+    <div class="paper p10">
+      <div class="paper-num">09</div>
+      <h3>Developer's Guide to SMPC Frameworks and Libraries</h3>
+      <div class="paper-author">Archer et al. · 2020</div>
+      <div class="paper-conclusion">Consumer report for SMPC software. Systematically evaluates frameworks across programming language support, performance, protocol availability, and community maturity. Data-driven recommendations for choosing tools.</div>
+      <div class="paper-relevance">Direct guide for our implementation phase. Accelerated framework selection and helped us choose EasySMPC for its balance of usability and performance — saving weeks of independent evaluation.</div>
+    </div>
+
+    <div class="paper p11">
+      <div class="paper-num">10</div>
+      <h3>SMPC for Genomic Data Privacy</h3>
+      <div class="paper-author">Cheng Wang et al. · 2021</div>
+      <div class="paper-conclusion">Addresses SMPC for genomic research — among the most privacy-sensitive data domains. Covers tailoring generic SMPC for specialized statistical tests (genome-wide association studies) on extremely large datasets.</div>
+      <div class="paper-relevance">Provided analogy and advanced techniques applicable to our healthcare workload. Their approach to handling large-scale sensitive datasets and domain-specific optimizations informed our healthcare data aggregation implementation.</div>
+    </div>
+
+  </div>
+</div></section>
+{% endblock %}

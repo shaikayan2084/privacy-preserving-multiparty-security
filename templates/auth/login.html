@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block extra_css %}
+<style>
+.auth-wrap{min-height:calc(100vh - 64px);display:flex;align-items:center;
+  justify-content:center;padding:40px 20px;
+  background:radial-gradient(ellipse at 30% 50%,rgba(0,212,232,0.05) 0%,transparent 60%),var(--navy);}
+.auth-card{width:100%;max-width:440px;background:var(--navy2);
+  border:1px solid rgba(0,212,232,0.15);border-radius:20px;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);}
+.auth-header{padding:32px 36px 24px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.auth-logo{font-size:32px;margin-bottom:12px;}
+.auth-title{font-family:var(--font-d,Syne,sans-serif);font-size:26px;font-weight:800;
+  color:var(--white);}
+.auth-sub{font-family:monospace;font-size:12px;color:var(--gray);margin-top:6px;letter-spacing:.5px;}
+.auth-body{padding:32px 36px;}
+.form-group{margin-bottom:20px;}
+.form-label{display:block;font-family:monospace;font-size:11px;color:var(--gray);
+  letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;}
+.form-input{width:100%;background:var(--navy);border:1px solid rgba(0,212,232,0.15);
+  color:var(--white);padding:12px 16px;border-radius:8px;font-size:14px;
+  outline:none;transition:border .2s;font-family:inherit;}
+.form-input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,212,232,0.08);}
+.form-input::placeholder{color:var(--gray2);}
+.form-error{background:rgba(240,96,96,0.1);border:1px solid rgba(240,96,96,0.3);
+  color:var(--red);padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:20px;
+  display:flex;align-items:flex-start;gap:8px;}
+.form-error::before{content:'⚠';flex-shrink:0;}
+.btn-submit{width:100%;background:var(--cyan);color:var(--navy);border:none;
+  padding:13px;border-radius:8px;font-family:Syne,sans-serif;font-size:15px;font-weight:700;
+  cursor:pointer;transition:all .2s;margin-top:4px;}
+.btn-submit:hover{background:var(--cyan2);transform:translateY(-1px);}
+.auth-footer{padding:0 36px 28px;text-align:center;}
+.auth-link{font-size:13px;color:var(--gray);}
+.auth-link a{color:var(--cyan);font-weight:600;}
+.auth-link a:hover{color:var(--white);}
+.auth-divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--gray2);font-size:12px;}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.08);}
+.security-info{background:rgba(0,212,232,0.05);border:1px solid rgba(0,212,232,0.1);
+  border-radius:8px;padding:12px 16px;margin-top:20px;}
+.security-info p{font-family:monospace;font-size:11px;color:var(--gray2);
+  display:flex;align-items:center;gap:6px;margin-bottom:4px;}
+.security-info p:last-child{margin-bottom:0;}
+.security-info span{color:var(--cyan);}
+.forgot-link{display:block;text-align:right;font-family:monospace;font-size:11px;
+  color:var(--gray2);margin-top:6px;}
+.forgot-link:hover{color:var(--cyan);}
+</style>
+{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-logo">🔐</div>
+      <div class="auth-title">Welcome Back</div>
+      <div class="auth-sub">Secure login — rate limited · session protected</div>
+    </div>
+    <div class="auth-body">
+      {% if error %}
+      <div class="form-error">{{ error }}</div>
+      {% endif %}
+
+      <form method="POST" action="{{ url_for('auth.login') }}" id="loginForm">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address</label>
+          <input class="form-input" type="email" id="email" name="email"
+            placeholder="you@example.com" required autocomplete="email"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input class="form-input" type="password" id="password" name="password"
+            placeholder="••••••••" required autocomplete="current-password"/>
+          <a class="forgot-link" href="{{ url_for('auth.forgot_password') }}">Forgot password?</a>
+        </div>
+        <button type="submit" class="btn-submit">Login Securely →</button>
+      </form>
+
+      <div class="auth-divider">or</div>
+      <div class="auth-footer" style="padding:0;">
+        <p class="auth-link">Don't have an account? <a href="{{ url_for('auth.signup') }}">Sign up</a></p>
+      </div>
+
+      <div class="security-info">
+        <p><span>🔒</span> HttpOnly & Secure session cookies</p>
+        <p><span>⚡</span> Rate limited: 20 attempts/minute</p>
+        <p><span>🛡️</span> Account locked after 5 failed attempts</p>
+        <p><span>🔑</span> CSRF protection enabled</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}About{% endblock %}
+{% block extra_css %}<style>
+.ph{padding:120px 0 70px;background:var(--navy1);border-bottom:1px solid rgba(0,212,232,.1);}
+.wrap{max-width:1100px;margin:0 auto;padding:0 32px;}
+.ph-tag{font-family:monospace;font-size:11px;color:var(--cyan);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;}
+.ph-title{font-family:Syne,sans-serif;font-size:clamp(36px,6vw,64px);font-weight:800;color:var(--white);line-height:1.1;margin-bottom:16px;}
+.ph-desc{font-size:17px;color:var(--gray);max-width:600px;line-height:1.8;}
+.sec{padding:80px 0;}
+.sec-tag{font-family:monospace;font-size:11px;color:var(--cyan);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;}
+.sec-h{font-family:Syne,sans-serif;font-size:clamp(26px,4vw,42px);font-weight:800;color:var(--white);margin-bottom:36px;}
+.sec-h .a{color:var(--cyan);}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start;}
+.lead{font-size:19px;line-height:1.8;color:var(--off);margin-bottom:16px;}
+.bp{font-size:15px;line-height:1.85;color:var(--text);margin-bottom:14px;}
+.ic{background:var(--navy2);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:24px;margin-bottom:16px;}
+.ic h3{font-family:Syne,sans-serif;font-size:16px;font-weight:700;color:var(--white);margin-bottom:9px;}
+.ic p{font-size:13.5px;color:var(--gray);line-height:1.7;}
+.quote{background:rgba(0,212,232,.05);border:1px solid rgba(0,212,232,.18);border-radius:10px;padding:22px 26px;margin:22px 0;}
+.quote p{font-size:15px;color:var(--off);line-height:1.8;font-style:italic;}
+.quote cite{display:block;font-family:monospace;font-size:10px;color:var(--cyan);margin-top:10px;font-style:normal;}
+.formula{background:var(--navy);border:1px solid rgba(0,212,232,.15);border-radius:10px;padding:16px 20px;font-family:monospace;font-size:13px;color:var(--cyan);margin:18px 0;line-height:2;letter-spacing:.5px;}
+.steps{display:flex;flex-direction:column;gap:12px;}
+.step{display:flex;gap:14px;padding:16px 18px;background:var(--navy2);border-radius:10px;border:1px solid rgba(255,255,255,.06);transition:all .2s;}
+.step:hover{border-color:rgba(0,212,232,.3);}
+.sn{font-family:Syne,sans-serif;font-size:22px;font-weight:800;color:var(--cyan);flex-shrink:0;width:32px;}
+.sc h4{font-family:Syne,sans-serif;font-size:14px;font-weight:700;color:var(--white);margin-bottom:4px;}
+.sc p{font-size:12.5px;color:var(--gray);line-height:1.6;}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
+.tag{font-family:monospace;font-size:10px;color:var(--cyan2);letter-spacing:1px;border:1px solid rgba(0,212,232,.2);border-radius:20px;padding:4px 12px;}
+@media(max-width:800px){.two{grid-template-columns:1fr;}}
+</style>{% endblock %}
+{% block content %}
+<div class="ph"><div class="wrap">
+  <div class="ph-tag">About This Project</div>
+  <h1 class="ph-title">Privacy-Preserving<br/>Data Collaboration</h1>
+  <p class="ph-desc">The cryptographic foundation that enables secure computation without ever revealing private data to any party.</p>
+</div></div>
+
+<section class="sec" style="background:var(--navy1);"><div class="wrap">
+  <div class="sec-tag">The Problem</div>
+  <h2 class="sec-h">Why <span class="a">Privacy</span> Matters in Collaboration</h2>
+  <div class="two">
+    <div>
+      <p class="lead">Organizations need to collaborate on sensitive data — but sharing raw information creates serious privacy and security risks.</p>
+      <p class="bp">Consider hospitals wanting to jointly study disease patterns, or banks detecting fraud by pooling transaction data. In both cases, the raw data is confidential and cannot simply be shared.</p>
+      <p class="bp">Traditional approaches force a painful choice: either share sensitive data and risk privacy violations, or work in isolation and lose the benefits of collaboration. SMPC breaks this trade-off entirely.</p>
+      <div class="quote"><p>"Cloud computing must decrypt data to process it — creating a window of exposure. SMPC eliminates this window entirely by computing on cryptographic shares."</p><cite>— Ravi Chandra Thota, IRJMETS Vol.07/Issue:10 (Oct 2025)</cite></div>
+    </div>
+    <div>
+      <div class="ic"><h3>🔓 Traditional Encryption Fails Here</h3><p>Encryption protects data at rest and in transit — but the moment data needs to be processed, it must be decrypted. This creates a vulnerability window where insider threats or breaches can expose raw data.</p></div>
+      <div class="ic"><h3>🏥 Healthcare Example</h3><p>Three hospitals want the most effective treatment across 50,000 combined patient records. Sharing records directly violates HIPAA. SMPC computes the answer — no hospital ever sees another's records.</p></div>
+      <div class="ic"><h3>💳 Finance Example</h3><p>Five banks want to jointly train a fraud detection model on their combined transaction history. SMPC enables joint ML training while each bank's customer data stays completely private and local.</p></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-tag">The Solution</div>
+  <h2 class="sec-h">How <span class="a">SMPC</span> Works</h2>
+  <div class="two">
+    <div>
+      <p class="bp"><strong style="color:var(--white)">Secure Multi-Party Computation (SMPC)</strong> allows multiple parties to jointly compute a function over private inputs — while revealing nothing but the final output.</p>
+      <p class="bp">Instead of sharing data, each party shares cryptographic "shares" of their data using Shamir's Secret Sharing. These shares are individually meaningless but collectively encode the data. All computation happens on the shares.</p>
+      <div class="formula">f(x₁, x₂, ..., xₙ) = result<br/>─────────────────────────<br/>Party 1 learns: result only<br/>Party 2 learns: result only<br/>No party learns: others' inputs</div>
+      <p class="bp">This is <strong style="color:var(--white)">information-theoretically secure</strong> — even an adversary with unlimited computing power who holds k-1 shares learns nothing about the secret.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="sn">01</div><div class="sc"><h4>Secret Sharing (Shamir's Scheme)</h4><p>Each party splits private data into n shares using a random polynomial of degree k-1 over finite field GF(p). Share i = f(i).</p></div></div>
+      <div class="step"><div class="sn">02</div><div class="sc"><h4>Share Distribution</h4><p>Each party sends one share to each of n cloud nodes. No single node holds all shares. Threshold k shares are required to reconstruct.</p></div></div>
+      <div class="step"><div class="sn">03</div><div class="sc"><h4>Secure Computation (BGW Protocol)</h4><p>Nodes compute on shares. Addition is free. Multiplication uses pre-computed Beaver triples — one communication round per multiply.</p></div></div>
+      <div class="step"><div class="sn">04</div><div class="sc"><h4>Output Reconstruction</h4><p>Any k nodes use Lagrange interpolation over GF(p) to reconstruct the final result — revealed only to authorized parties.</p></div></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="sec" style="background:var(--navy1);"><div class="wrap">
+  <div class="sec-tag">Technology Stack</div>
+  <h2 class="sec-h">Project <span class="a">Implementation</span></h2>
+  <div class="two">
+    <div>
+      <p class="bp">This project implements a full-stack privacy-preserving computation system — from the cryptographic backend to a secure web interface with multi-factor authentication and role-based access control.</p>
+      <div class="ic"><h3>🌐 This Website</h3><p>This Flask application implements all modern web security practices: rate limiting, MFA/TOTP, CSRF protection, bcrypt password hashing, session rotation, RBAC, secure cookies, security logging — demonstrating both cryptographic and application-level security.</p></div>
+      <div class="ic"><h3>⚙️ Live SMPC Simulator</h3><p>The interactive simulator runs real Shamir Secret Sharing over a Mersenne prime field server-side, distributing actual cryptographic shares — not a mock visualization. Try it on the dashboard after logging in.</p></div>
+    </div>
+    <div>
+      <p class="bp" style="margin-bottom:14px;">Technologies used across the full system:</p>
+      <div class="tags">
+        <span class="tag">Python 3.12</span><span class="tag">Flask</span><span class="tag">SQLAlchemy</span>
+        <span class="tag">bcrypt (12 rounds)</span><span class="tag">pyotp TOTP</span><span class="tag">Flask-Limiter</span>
+        <span class="tag">Flask-Login</span><span class="tag">CSRF (WTF)</span><span class="tag">Shamir SSS</span>
+        <span class="tag">BGW Protocol</span><span class="tag">AES-256-GCM</span><span class="tag">SHA3-256</span>
+        <span class="tag">TLS 1.3</span><span class="tag">Docker</span><span class="tag">Kubernetes</span>
+        <span class="tag">EasySMPC</span><span class="tag">GF(2³¹-1)</span><span class="tag">Lagrange Interpolation</span>
+      </div>
+    </div>
+  </div>
+</div></section>
+{% endblock %}

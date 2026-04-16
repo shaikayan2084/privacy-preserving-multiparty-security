@@ -1,0 +1,49 @@
+{% extends "base.html" %}{% block title %}Admin — Users{% endblock %}
+{% block extra_css %}<style>
+.admin-wrap{max-width:1100px;margin:0 auto;padding:40px 24px;}
+.admin-h{font-family:Syne,sans-serif;font-size:26px;font-weight:800;color:var(--white);margin-bottom:8px;}
+.admin-sub{font-family:monospace;font-size:12px;color:var(--orange);margin-bottom:28px;}
+.table-card{background:var(--navy2);border:1px solid rgba(255,255,255,.06);border-radius:14px;overflow:hidden;}
+.tbl{width:100%;border-collapse:collapse;font-family:monospace;font-size:13px;}
+.tbl th{padding:12px 16px;background:var(--navy3);text-align:left;font-size:10px;color:var(--gray2);letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.06);}
+.tbl td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--gray);}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:rgba(255,255,255,.02);}
+.badge-g{color:var(--green);background:rgba(16,232,154,.1);padding:2px 8px;border-radius:10px;font-size:10px;}
+.badge-r{color:var(--red);background:rgba(240,96,96,.1);padding:2px 8px;border-radius:10px;font-size:10px;}
+.badge-a{color:var(--orange);background:rgba(245,166,35,.1);padding:2px 8px;border-radius:10px;font-size:10px;}
+.btn-sm{padding:5px 12px;border-radius:6px;font-family:Syne,sans-serif;font-size:11px;font-weight:700;border:none;cursor:pointer;transition:all .2s;}
+.btn-toggle-act{background:rgba(240,96,96,.15);color:var(--red);}
+.btn-toggle-deact{background:rgba(16,232,154,.15);color:var(--green);}
+</style>{% endblock %}
+{% block content %}
+<div class="admin-wrap">
+  <div class="admin-h">👑 Admin — User Management</div>
+  <div class="admin-sub">⭐ ADMIN ACCESS ONLY · Role-Based Access Control Active</div>
+  <div class="table-card">
+    <table class="tbl">
+      <thead><tr><th>#</th><th>Username</th><th>Email</th><th>Role</th><th>Verified</th><th>MFA</th><th>Status</th><th>Last Login</th><th>Action</th></tr></thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td>{{ u.id }}</td>
+          <td style="color:var(--white);font-weight:600;">{{ u.username }}</td>
+          <td>{{ u.email }}</td>
+          <td>{% if u.role and u.role.name=='admin' %}<span class="badge-a">ADMIN</span>{% else %}<span style="color:var(--cyan)">user</span>{% endif %}</td>
+          <td>{% if u.is_verified %}<span class="badge-g">✓ Yes</span>{% else %}<span class="badge-r">✕ No</span>{% endif %}</td>
+          <td>{% if u.mfa_enabled %}<span class="badge-g">✓</span>{% else %}<span class="badge-r">✕</span>{% endif %}</td>
+          <td>{% if u.is_active %}<span class="badge-g">Active</span>{% else %}<span class="badge-r">Disabled</span>{% endif %}</td>
+          <td>{{ u.last_login.strftime('%d %b %H:%M') if u.last_login else '—' }}</td>
+          <td>{% if u.id != current_user.id %}
+            <form method="POST" action="{{ url_for('admin.toggle_user', user_id=u.id) }}" style="display:inline;">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+              <button type="submit" class="btn-sm {% if u.is_active %}btn-toggle-act{% else %}btn-toggle-deact{% endif %}">{{ 'Disable' if u.is_active else 'Enable' }}</button>
+            </form>
+          {% else %}<span style="color:var(--gray2);font-size:11px;">You</span>{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div style="margin-top:16px;"><a href="{{ url_for('admin.security_logs') }}" style="background:var(--navy2);border:1px solid rgba(255,255,255,.1);color:var(--off);padding:8px 16px;border-radius:8px;font-family:Syne,sans-serif;font-size:13px;font-weight:600;">📋 Security Logs →</a></div>
+</div>{% endblock %}

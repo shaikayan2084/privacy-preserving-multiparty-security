@@ -1,0 +1,43 @@
+{% extends "base.html" %}{% block title %}Setup MFA{% endblock %}
+{% block extra_css %}<style>
+.auth-wrap{min-height:calc(100vh - 64px);display:flex;align-items:center;justify-content:center;padding:40px 20px;background:var(--navy);}
+.auth-card{width:100%;max-width:440px;background:var(--navy2);border:1px solid rgba(0,212,232,0.15);border-radius:20px;overflow:hidden;}
+.auth-header{padding:28px 32px 20px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.auth-title{font-family:Syne,sans-serif;font-size:22px;font-weight:800;color:var(--white);}
+.auth-sub{font-family:monospace;font-size:11px;color:var(--gray);margin-top:4px;}
+.auth-body{padding:28px 32px;}
+.qr-box{background:var(--white);padding:16px;border-radius:12px;display:inline-block;margin-bottom:20px;}
+.secret-box{background:var(--navy);border:1px solid rgba(0,212,232,0.15);border-radius:8px;padding:12px;font-family:monospace;font-size:14px;color:var(--cyan);letter-spacing:2px;word-break:break-all;margin-bottom:20px;}
+.form-label{display:block;font-family:monospace;font-size:10px;color:var(--gray);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:7px;}
+.form-input{width:100%;background:var(--navy);border:1px solid rgba(0,212,232,0.15);color:var(--white);padding:11px 15px;border-radius:8px;font-size:16px;outline:none;letter-spacing:4px;text-align:center;margin-bottom:14px;}
+.form-input:focus{border-color:var(--cyan);}
+.btn-submit{width:100%;background:var(--cyan);color:var(--navy);border:none;padding:12px;border-radius:8px;font-family:Syne,sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-submit:hover{background:var(--cyan2);}
+.step{font-family:monospace;font-size:12px;color:var(--gray);margin-bottom:8px;display:flex;gap:8px;}
+.step span{color:var(--cyan);font-weight:700;}
+.skip-link{display:block;text-align:center;margin-top:14px;font-family:monospace;font-size:11px;color:var(--gray2);}
+.skip-link a{color:var(--gray);}
+</style>{% endblock %}
+{% block content %}
+<div class="auth-wrap"><div class="auth-card">
+  <div class="auth-header"><div style="font-size:28px;margin-bottom:8px;">📱</div>
+    <div class="auth-title">Setup Two-Factor Auth</div>
+    <div class="auth-sub">TOTP via authenticator app (Google Auth / Authy)</div>
+  </div>
+  <div class="auth-body">
+    <div class="step"><span>1.</span> Install Google Authenticator or Authy on your phone</div>
+    <div class="step"><span>2.</span> Scan the QR code below</div>
+    <div style="text-align:center;"><div class="qr-box"><img src="data:image/png;base64,{{ qr_b64 }}" alt="MFA QR Code" width="180"/></div></div>
+    <div class="step"><span>3.</span> Or enter this key manually:</div>
+    <div class="secret-box">{{ secret }}</div>
+    <div class="step"><span>4.</span> Enter the 6-digit OTP from your app:</div>
+    <form method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+      <label class="form-label">One-Time Password</label>
+      <input class="form-input" type="text" name="otp" placeholder="000000" maxlength="6" pattern="[0-9]{6}" required autocomplete="off"/>
+      <button type="submit" class="btn-submit">Enable MFA →</button>
+    </form>
+    <div class="skip-link"><a href="{{ url_for('main.dashboard') }}">Skip for now (not recommended)</a></div>
+  </div>
+</div></div>
+{% endblock %}

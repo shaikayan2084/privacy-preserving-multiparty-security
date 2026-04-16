@@ -1,0 +1,54 @@
+{% extends "base.html" %}{% block title %}Profile{% endblock %}
+{% block extra_css %}<style>
+.profile-wrap{max-width:700px;margin:0 auto;padding:40px 24px;}
+.profile-card{background:var(--navy2);border:1px solid rgba(0,212,232,0.15);border-radius:16px;overflow:hidden;margin-bottom:20px;}
+.profile-hdr{padding:24px 28px;border-bottom:1px solid rgba(255,255,255,.06);font-family:Syne,sans-serif;font-size:17px;font-weight:700;color:var(--white);display:flex;align-items:center;gap:10px;}
+.profile-body{padding:24px 28px;}
+.form-group{margin-bottom:18px;}
+.form-label{display:block;font-family:monospace;font-size:10px;color:var(--gray);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:7px;}
+.form-input{width:100%;background:var(--navy);border:1px solid rgba(0,212,232,0.15);color:var(--white);padding:11px 15px;border-radius:8px;font-size:14px;outline:none;transition:border .2s;}
+.form-input:focus{border-color:var(--cyan);}
+.btn-save{background:var(--cyan);color:var(--navy);border:none;padding:11px 24px;border-radius:8px;font-family:Syne,sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-save:hover{background:var(--cyan2);}
+.info-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:13px;}
+.info-row:last-child{border-bottom:none;}
+.info-key{font-family:monospace;color:var(--gray);}
+.info-val{color:var(--off);font-weight:600;}
+</style>{% endblock %}
+{% block content %}
+<div class="profile-wrap">
+  <h2 style="font-family:Syne,sans-serif;font-size:26px;font-weight:800;color:var(--white);margin-bottom:24px;">⚙️ Profile & Security</h2>
+  <div class="profile-card">
+    <div class="profile-hdr">🧑 Account Info</div>
+    <div class="profile-body">
+      <div class="info-row"><span class="info-key">Username</span><span class="info-val">{{ current_user.username }}</span></div>
+      <div class="info-row"><span class="info-key">Email</span><span class="info-val">{{ current_user.email }}</span></div>
+      <div class="info-row"><span class="info-key">Role</span><span class="info-val" style="color:var(--cyan)">{{ current_user.role.name|upper if current_user.role else 'USER' }}</span></div>
+      <div class="info-row"><span class="info-key">MFA</span><span class="info-val" style="color:{% if current_user.mfa_enabled %}var(--green){% else %}var(--orange){% endif %}">{% if current_user.mfa_enabled %}✓ Enabled{% else %}⚠ Disabled{% endif %}</span></div>
+      <div class="info-row"><span class="info-key">Member Since</span><span class="info-val">{{ current_user.created_at.strftime('%d %B %Y') }}</span></div>
+    </div>
+  </div>
+  <div class="profile-card">
+    <div class="profile-hdr">🔑 Change Password</div>
+    <div class="profile-body">
+      <form method="POST" action="{{ url_for('main.profile') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <input type="hidden" name="action" value="change_password"/>
+        <div class="form-group"><label class="form-label">Current Password</label><input class="form-input" type="password" name="old_password" required placeholder="Your current password"/></div>
+        <div class="form-group"><label class="form-label">New Password</label><input class="form-input" type="password" name="new_password" required minlength="8" placeholder="Min. 8 characters"/></div>
+        <div class="form-group"><label class="form-label">Confirm New Password</label><input class="form-input" type="password" name="confirm_password" required placeholder="Repeat new password"/></div>
+        <button type="submit" class="btn-save">Update Password →</button>
+      </form>
+    </div>
+  </div>
+  {% if not current_user.mfa_enabled %}
+  <div class="profile-card" style="border-color:rgba(245,166,35,.3);">
+    <div class="profile-hdr" style="color:var(--orange);">⚠️ MFA Not Enabled</div>
+    <div class="profile-body">
+      <p style="font-size:14px;color:var(--gray);margin-bottom:16px;">Two-factor authentication greatly improves account security. Enable it now with any authenticator app.</p>
+      <a href="{{ url_for('auth.mfa_setup') }}" style="background:var(--orange);color:var(--navy);padding:10px 20px;border-radius:8px;font-family:Syne,sans-serif;font-size:13px;font-weight:700;display:inline-block;">Enable MFA Now →</a>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

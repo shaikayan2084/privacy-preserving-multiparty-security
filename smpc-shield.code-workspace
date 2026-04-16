@@ -1,0 +1,82 @@
+{
+  "folders": [
+    {
+      "name": "SMPC Shield — Privacy-Preserving Data Collaboration",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "python.defaultInterpreterPath": "${workspaceFolder}/venv/Scripts/python.exe",
+    "python.terminal.activateEnvironment": true,
+    "editor.fontSize": 14,
+    "editor.tabSize": 4,
+    "editor.formatOnSave": true,
+    "editor.rulers": [88],
+    "editor.wordWrap": "on",
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/*.pyc": true,
+      "**/instance": false,
+      "**/venv": true
+    },
+    "emmet.includeLanguages": { "jinja-html": "html" },
+    "files.associations": {
+      "*.html": "jinja-html"
+    },
+    "terminal.integrated.defaultProfile.windows": "Command Prompt",
+    "workbench.colorTheme": "One Dark Pro",
+    "workbench.iconTheme": "material-icon-theme",
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.patterns": {
+      "app.py": "run.py, requirements.txt, .env*, .gitignore"
+    }
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "🔐 Run SMPC Flask App",
+        "type": "python",
+        "request": "launch",
+        "program": "${workspaceFolder}/run.py",
+        "console": "integratedTerminal",
+        "env": {
+          "FLASK_DEBUG": "True",
+          "FLASK_APP": "app.py"
+        },
+        "justMyCode": true
+      }
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Install Dependencies",
+        "type": "shell",
+        "command": "pip install -r requirements.txt",
+        "group": "build",
+        "presentation": { "reveal": "always", "panel": "new" }
+      },
+      {
+        "label": "Run Flask App",
+        "type": "shell",
+        "command": "python run.py",
+        "group": { "kind": "build", "isDefault": true },
+        "presentation": { "reveal": "always", "panel": "new" }
+      }
+    ]
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-python.python",
+      "ms-python.pylance",
+      "wholroyd.jinja",
+      "zhuangtongfa.material-theme",
+      "PKief.material-icon-theme",
+      "eamodio.gitlens",
+      "usernamehw.errorlens",
+      "streetsidesoftware.code-spell-checker"
+    ]
+  }
+}

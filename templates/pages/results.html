@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% block title %}Results{% endblock %}
+{% block extra_css %}<style>
+.ph{padding:120px 0 70px;background:var(--navy1);border-bottom:1px solid rgba(0,212,232,.1);}
+.wrap{max-width:1100px;margin:0 auto;padding:0 32px;}
+.ph-tag{font-family:monospace;font-size:11px;color:var(--cyan);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;}
+.ph-title{font-family:Syne,sans-serif;font-size:clamp(36px,6vw,64px);font-weight:800;color:var(--white);line-height:1.1;margin-bottom:16px;}
+.ph-desc{font-size:17px;color:var(--gray);max-width:600px;line-height:1.8;}
+.sec{padding:80px 0;}
+.sec-tag{font-family:monospace;font-size:11px;color:var(--cyan);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;}
+.sec-h{font-family:Syne,sans-serif;font-size:clamp(26px,4vw,42px);font-weight:800;color:var(--white);margin-bottom:36px;}
+.sec-h .a{color:var(--cyan);}
+.bp{font-size:15px;line-height:1.85;color:var(--text);margin-bottom:14px;}
+/* Big stats */
+.big-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:40px;}
+.bs{background:var(--navy2);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:28px 22px;position:relative;overflow:hidden;}
+.bs::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;}
+.bs1::before{background:var(--cyan);}.bs2::before{background:var(--green);}
+.bs3::before{background:var(--orange);}.bs4::before{background:var(--purple);}
+.bs .num{font-family:Syne,sans-serif;font-size:42px;font-weight:800;display:block;margin-bottom:6px;}
+.bs1 .num{color:var(--cyan);}.bs2 .num{color:var(--green);}
+.bs3 .num{color:var(--orange);}.bs4 .num{color:var(--purple);}
+.bs .lbl{font-family:Syne,sans-serif;font-size:13px;font-weight:700;color:var(--white);margin-bottom:4px;display:block;}
+.bs .sub{font-family:monospace;font-size:11px;color:var(--gray2);}
+.bs .ico{position:absolute;bottom:14px;right:14px;font-size:32px;opacity:.12;}
+/* Bar chart */
+.chart-wrap{background:var(--navy2);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:32px;}
+.chart-title{font-family:Syne,sans-serif;font-size:16px;font-weight:700;color:var(--white);margin-bottom:24px;}
+.bar-chart{display:flex;flex-direction:column;gap:12px;}
+.bar-row{display:flex;align-items:center;gap:14px;}
+.bar-lbl{font-family:monospace;font-size:11px;color:var(--gray);width:80px;text-align:right;flex-shrink:0;}
+.bar-track{flex:1;height:28px;background:var(--navy);border-radius:5px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:5px;display:flex;align-items:center;justify-content:flex-end;padding-right:10px;font-family:monospace;font-size:11px;color:var(--navy);font-weight:700;transition:width 1.4s cubic-bezier(.4,0,.2,1);}
+.bar-val{font-family:monospace;font-size:11px;color:var(--gray2);width:40px;flex-shrink:0;}
+/* Two col */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:32px;}
+/* Workloads */
+.wl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px;}
+.wl{background:var(--navy2);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:24px;}
+.wl-icon{font-size:30px;margin-bottom:10px;}
+.wl h3{font-family:Syne,sans-serif;font-size:15px;font-weight:700;color:var(--white);margin-bottom:8px;}
+.wl p{font-size:13px;color:var(--gray);line-height:1.65;}
+/* Compare table */
+.ctbl{width:100%;border-collapse:collapse;font-family:monospace;font-size:13px;}
+.ctbl th{padding:13px 16px;background:var(--navy2);text-align:left;font-size:10px;color:var(--gray2);letter-spacing:1px;text-transform:uppercase;border-bottom:2px solid var(--navy3);}
+.ctbl td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--gray);}
+.ctbl tr:hover td{background:rgba(255,255,255,.02);}
+.ctbl td:first-child{color:var(--off);font-weight:600;}
+.good{color:var(--green)!important;}.ok{color:var(--orange)!important;}.bad{color:var(--red)!important;}
+.best-hdr{color:var(--cyan)!important;}
+.best-cell{background:rgba(0,212,232,.05);color:var(--cyan)!important;font-weight:700;}
+.key-finding{background:rgba(0,212,232,.06);border:1px solid rgba(0,212,232,.2);border-radius:10px;padding:18px 22px;margin-top:20px;font-family:monospace;font-size:12px;color:var(--cyan);line-height:1.7;}
+.setup-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+.setup-item{background:var(--navy2);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:20px;}
+.setup-item h4{font-family:Syne,sans-serif;font-size:14px;font-weight:700;color:var(--white);margin-bottom:8px;}
+.setup-item p{font-size:13px;color:var(--gray);line-height:1.65;}
+@media(max-width:900px){.big-stats{grid-template-columns:1fr 1fr;}.wl-grid,.two,.setup-grid{grid-template-columns:1fr;}}
+</style>{% endblock %}
+{% block content %}
+<div class="ph"><div class="wrap">
+  <div class="ph-tag">Experimental Evaluation</div>
+  <h1 class="ph-title">Performance Results</h1>
+  <p class="ph-desc">Quantitative evaluation of the SMPC framework across healthcare, financial, and federated ML workloads — measured on latency, overhead, and scalability.</p>
+</div></div>
+
+<!-- BIG NUMBERS -->
+<section class="sec" style="background:var(--navy1);"><div class="wrap">
+  <div class="sec-tag">Key Metrics</div>
+  <h2 class="sec-h">Headline <span class="a">Numbers</span></h2>
+  <div class="big-stats">
+    <div class="bs bs1"><span class="num">&lt;1.5s</span><span class="lbl">Response Time</span><span class="sub">Lightweight workloads at 10 nodes</span><span class="ico">⚡</span></div>
+    <div class="bs bs2"><span class="num">35%</span><span class="lbl">Overhead Reduction</span><span class="sub">Via pre-computed multiplication triples</span><span class="ico">📉</span></div>
+    <div class="bs bs3"><span class="num">&lt;1.8%</span><span class="lbl">ML Accuracy Loss</span><span class="sub">vs centralized training (statistically insignificant)</span><span class="ico">🎯</span></div>
+    <div class="bs bs4"><span class="num">65%</span><span class="lbl">Lower Cost vs HE</span><span class="sub">Homomorphic Encryption 15× slower</span><span class="ico">💡</span></div>
+  </div>
+
+  <!-- SCALABILITY CHART -->
+  <div class="chart-wrap">
+    <div class="chart-title">📊 Scalability — Throughput vs Node Count (ops/sec)</div>
+    <div class="bar-chart" id="scaleChart">
+      <div class="bar-row"><span class="bar-lbl">4 Nodes</span><div class="bar-track"><div class="bar-fill" style="width:0%;background:linear-gradient(to right,var(--cyan2),var(--cyan));" data-w="34">34</div></div><span class="bar-val">34</span></div>
+      <div class="bar-row"><span class="bar-lbl">6 Nodes</span><div class="bar-track"><div class="bar-fill" style="width:0%;background:linear-gradient(to right,var(--cyan2),var(--cyan));" data-w="53">53</div></div><span class="bar-val">53</span></div>
+      <div class="bar-row"><span class="bar-lbl">8 Nodes</span><div class="bar-track"><div class="bar-fill" style="width:0%;background:linear-gradient(to right,var(--cyan2),var(--cyan));" data-w="70">70</div></div><span class="bar-val">70</span></div>
+      <div class="bar-row"><span class="bar-lbl">10 Nodes</span><div class="bar-track"><div class="bar-fill" style="width:0%;background:linear-gradient(to right,var(--cyan2),var(--cyan));" data-w="87">87</div></div><span class="bar-val">87</span></div>
+      <div class="bar-row"><span class="bar-lbl">12 Nodes</span><div class="bar-track"><div class="bar-fill" style="width:0%;background:linear-gradient(to right,var(--green2,#00a875),var(--green));" data-w="100">100</div></div><span class="bar-val">100</span></div>
+      <div class="bar-row"><span class="bar-lbl">16 Nodes</span><div class="bar-track"><div class="bar-fill" style="width:0%;background:linear-gradient(to right,var(--orange),var(--red));" data-w="95">95 ↓</div></div><span class="bar-val">95</span></div>
+    </div>
+    <p style="font-family:monospace;font-size:11px;color:var(--gray2);margin-top:16px;">Near-linear scaling to 12 nodes. Beyond 12, network congestion begins to dominate. Adaptive orchestration reduces this degradation by 28%.</p>
+  </div>
+</div></section>
+
+<!-- WORKLOADS -->
+<section class="sec"><div class="wrap">
+  <div class="sec-tag">Test Workloads</div>
+  <h2 class="sec-h">Experimental <span class="a">Setup & Datasets</span></h2>
+  <div class="wl-grid">
+    <div class="wl"><div class="wl-icon">🏥</div><h3>Healthcare Aggregation</h3><p>Simulated aggregation of electronic health records — patient demographics, diagnosis codes, and treatment outcomes. Sensitive features processed without exposing individual records.</p></div>
+    <div class="wl"><div class="wl-icon">💳</div><h3>Financial Risk Analysis</h3><p>Synthetic transaction data for credit risk modeling and fraud detection. Intensive numeric computation including multi-party matrix operations over GF(p).</p></div>
+    <div class="wl"><div class="wl-icon">🤖</div><h3>Federated ML Training</h3><p>Federated training of logistic regression model across 5 organizations. Accuracy compared against centralized baseline — variance below 1.8% across 5 repeated trials.</p></div>
+  </div>
+  <div class="setup-grid">
+    <div class="setup-item"><h4>⚙️ Hardware Configuration</h4><p>Each node: 8-core CPU, 32 GB RAM, 1 Gbps network bandwidth. Virtual machines distributed across geographically separated data centers.</p></div>
+    <div class="setup-item"><h4>🐳 Container Stack</h4><p>Docker + Kubernetes for orchestration. EasySMPC framework with adaptive orchestration extensions. TLS 1.3 between all nodes.</p></div>
+    <div class="setup-item"><h4>📏 Node Range</h4><p>Tested with 4, 6, 8, 10, 12, 16 active nodes. KPI monitoring at 5-second intervals. Auto-scaling triggers at 1.5s latency or 80% network utilization.</p></div>
+    <div class="setup-item"><h4>🔁 Repeatability</h4><p>5 experimental runs per configuration. Standard deviation &lt;3% across runs, confirming framework reproducibility and statistical consistency.</p></div>
+  </div>
+</div></section>
+
+<!-- COMPARE TABLE -->
+<section class="sec" style="background:var(--navy1);"><div class="wrap">
+  <div class="sec-tag">Comparative Analysis</div>
+  <h2 class="sec-h">SMPC vs HE vs <span class="a">TEE</span></h2>
+  <div style="overflow-x:auto;">
+  <table class="ctbl">
+    <thead><tr><th>Aspect</th><th>Homomorphic Encryption</th><th>Trusted Exec. Env.</th><th class="best-hdr">SMPC (Our System) ★</th></tr></thead>
+    <tbody>
+      <tr><td>Computation Efficiency</td><td class="bad">Very high overhead (×15 slower)</td><td class="ok">Efficient inside enclave</td><td class="best-cell">Moderate; pre-computed triples</td></tr>
+      <tr><td>Latency (Lightweight)</td><td class="bad">High — impractical real-time</td><td class="ok">Low (limited scalability)</td><td class="best-cell">&lt;1.5s at 10 nodes</td></tr>
+      <tr><td>Scalability</td><td class="bad">Poor — exponential memory</td><td class="bad">Limited by enclave capacity</td><td class="best-cell">Near-linear to 12 nodes</td></tr>
+      <tr><td>Security Model</td><td class="ok">Strong crypto; costly</td><td class="bad">Hardware-dependent; side-channel risk</td><td class="best-cell">Protocol-level; no hardware trust</td></tr>
+      <tr><td>Cross-Org Collaboration</td><td class="bad">Not easily facilitated</td><td class="bad">Not easily facilitated</td><td class="best-cell">Core use case</td></tr>
+      <tr><td>Cloud Practicality</td><td class="bad">Largely theoretical at scale</td><td class="ok">Practical but hardware-tied</td><td class="best-cell">Multi-tenant demonstrated</td></tr>
+      <tr><td>Compute Cost</td><td class="bad">Baseline (highest)</td><td class="ok">~80% of SMPC throughput</td><td class="best-cell">65% less than HE</td></tr>
+      <tr><td>GDPR / CCPA Compliance</td><td class="ok">Supported</td><td class="ok">Supported (with caveats)</td><td class="best-cell">Fully supported</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="key-finding">
+    🔍 Key Finding: SMPC achieves a balanced trade-off — 65% lower computational cost than HE while reaching ~80% of TEE throughput without hardware dependencies or vendor lock-in.
+    Future direction: hybrid SMPC+TEE architecture for latency-sensitive sub-tasks.
+    <br/>Source: Ravi Chandra Thota (2025). IRJMETS Vol.07/Issue:10. DOI: 10.56726/IRJMETS83393
+  </div>
+</div></section>
+
+{% endblock %}
+{% block extra_js %}
+<script>
+// Animate bars on page load
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.querySelectorAll('.bar-fill').forEach(bar => {
+      const target = bar.dataset.w;
+      bar.style.width = target + '%';
+    });
+  }, 300);
+});
+</script>
+{% endblock %}

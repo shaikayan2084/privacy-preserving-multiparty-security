@@ -1,0 +1,34 @@
+{% extends "base.html" %}{% block title %}MFA Verification{% endblock %}
+{% block extra_css %}<style>
+.auth-wrap{min-height:calc(100vh - 64px);display:flex;align-items:center;justify-content:center;padding:40px 20px;background:var(--navy);}
+.auth-card{width:100%;max-width:380px;background:var(--navy2);border:1px solid rgba(0,212,232,0.15);border-radius:20px;overflow:hidden;}
+.auth-header{padding:28px 32px 20px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.auth-title{font-family:Syne,sans-serif;font-size:22px;font-weight:800;color:var(--white);}
+.auth-sub{font-family:monospace;font-size:11px;color:var(--gray);margin-top:4px;}
+.auth-body{padding:28px 32px;}
+.form-error{background:rgba(240,96,96,0.1);border:1px solid rgba(240,96,96,0.3);color:var(--red);padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:16px;}
+.form-label{display:block;font-family:monospace;font-size:10px;color:var(--gray);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:7px;}
+.form-input{width:100%;background:var(--navy);border:1px solid rgba(0,212,232,0.15);color:var(--white);padding:12px;border-radius:8px;font-size:22px;outline:none;letter-spacing:8px;text-align:center;margin-bottom:14px;}
+.form-input:focus{border-color:var(--cyan);}
+.btn-submit{width:100%;background:var(--cyan);color:var(--navy);border:none;padding:12px;border-radius:8px;font-family:Syne,sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-submit:hover{background:var(--cyan2);}
+.hint{font-family:monospace;font-size:11px;color:var(--gray2);text-align:center;margin-top:12px;}
+</style>{% endblock %}
+{% block content %}
+<div class="auth-wrap"><div class="auth-card">
+  <div class="auth-header"><div style="font-size:28px;margin-bottom:8px;">🔐</div>
+    <div class="auth-title">Two-Factor Auth</div>
+    <div class="auth-sub">Enter the OTP from your authenticator app</div>
+  </div>
+  <div class="auth-body">
+    {% if error %}<div class="form-error">⚠ {{ error }}</div>{% endif %}
+    <form method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+      <label class="form-label">6-Digit OTP</label>
+      <input class="form-input" type="text" name="otp" placeholder="000000" maxlength="6" pattern="[0-9]{6}" required autocomplete="off" autofocus/>
+      <button type="submit" class="btn-submit">Verify →</button>
+    </form>
+    <p class="hint">Open your authenticator app to get the code</p>
+  </div>
+</div></div>
+{% endblock %}
